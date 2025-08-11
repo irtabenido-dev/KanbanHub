@@ -1,0 +1,17 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.activity code {
+    background-color: #272822;
+    color: #f8f8f2;
+    padding: 5px;
+    border-radius: 5px;
+    font-family: SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace;
+}
+
+.activity strong {
+    color: #272822;
+    font-weight: 900;
+}
