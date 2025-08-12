@@ -1,4 +1,4 @@
-import { createSelector, createSlice, current } from "@reduxjs/toolkit";
+import { createSelector, createSlice } from "@reduxjs/toolkit";
 
 export const boardSlice = createSlice({
     name: "board",
@@ -246,34 +246,6 @@ export const getTask = createSelector(
         return list?.tasks.find(task => task.id === taskId);
     }
 );
-
-// export const getBoard = (state) => state.board.board;
-// export const getUsers = (state) => state.board.users;
-
-// export const getBoardUser = (state, id) => {
-//     const user = state.board.users.find(user => user.id === id);
-//     return user;
-// };
-
-// export const getTask = (state, listId, taskId) => {
-//     const list = state.board.lists.find((list) => list.id === listId);
-
-//     if (list) {
-//         return list.tasks.find((task) => task.id === taskId);
-//     }
-// };
-
-// export const getBoardOwner = (state) => {
-//     return state.board.users.find(user => user.boardRole === 'owner');
-// }
-
-// export const getUserRoles = (state, userId) => {
-//     const { workspaceRole, boardRole } = state.board.users.find(user => user.id === userId);
-//     return {
-//         workspaceRole: workspaceRole,
-//         boardRole: boardRole
-//     };
-// }
 
 export const {
     setBoard,

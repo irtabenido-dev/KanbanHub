@@ -1,7 +1,9 @@
+import { selectWorkspace } from '@/Features/workspaces/workspacesSlice';
 import { Link } from '@inertiajs/react';
 import { Button, Chip, Typography } from '@material-tailwind/react';
 import axios from 'axios';
 import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 export default function WorkspaceBoard({ board }) {
     const [requestSent, setRequestSent] = useState(false);
@@ -14,10 +16,13 @@ export default function WorkspaceBoard({ board }) {
             console.log(errors);
         }
     }
+    const dispatch = useDispatch();
+    const currentWorkspace = useSelector(selectWorkspace(board.workspaceId));
+    const userBoardRole = currentWorkspace?.currentUser?.role;
 
     return (
         <div className='h-[7.5rem] w-[15rem] bg-gray-200 rounded-xl'>
-            {board.hasAccess &&
+            {(board.hasAccess || (userBoardRole === 'owner' || userBoardRole === 'admin')) &&
                 <Link
                     href={route('board.index', { workspaceId: board.workspaceId, id: board.id })}
                     className="h-full flex flex-shrink-0 justify-center items-center">
@@ -48,7 +53,7 @@ export default function WorkspaceBoard({ board }) {
                     }
                 </div>
             }
-            {board.blacklisted &&
+            {(board.blacklisted && (userBoardRole !== 'owner' && userBoardRole !== 'admin')) &&
                 <div className='h-full flex flex-col justify-center items-center p-2 text-center'>
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 text-red-500">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M18.364 18.364A9 9 0 0 0 5.636 5.636m12.728 12.728A9 9 0 0 1 5.636 5.636m12.728 12.728L5.636 5.636" />

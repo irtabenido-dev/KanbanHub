@@ -4,10 +4,8 @@ namespace App\Notifications;
 
 use App\Models\User;
 use App\Models\Workspace;
-use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
@@ -44,7 +42,7 @@ class InvitationSent extends Notification implements ShouldQueue
     public function via(object $notifiable): array
     {
 
-        return ['mail', 'database',  'broadcast'];
+        return ['mail', 'database'];
     }
 
     /**
@@ -79,26 +77,4 @@ class InvitationSent extends Notification implements ShouldQueue
             'invitation_link' => $this->invitationData['invitation_link']
         ];
     }
-
-    public function broadcastOn(){
-
-        return new PrivateChannel("invite.{$this->invited_id}");
-    }
-
-    public function broadcastAs(){
-        return 'invitation';
-    }
-
-    public function toBroadcast($notifiable){
-        return new BroadcastMessage([
-            'id' => $this->invitationData['id'],
-            'type' => 'workspace_invitation',
-            'workspace_id' => $this->workspace_id,
-            'workspace_name' => $this->workspace_name,
-            'invitation_link' => $this->invitationData['invitation_link'],
-            'inviter_name' => $this->inviter_name,
-            'invited_name' => $this->invited_name
-         ]);
-    }
-
 }

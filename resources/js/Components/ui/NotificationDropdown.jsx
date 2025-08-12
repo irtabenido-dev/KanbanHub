@@ -4,7 +4,6 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Notification from "./Notification";
 import { useDispatch, useSelector } from "react-redux";
 import {
-    addNotification,
     setNotifications,
 } from "@/Features/notifications/notificationsSlice";
 import { VariableSizeList as List } from 'react-window';
@@ -54,15 +53,6 @@ export default function NotificationDropdown({ user }) {
     }, [show]);
 
     useEffect(() => {
-        const inviteChannel = window.Echo.private(`invite.${user.id}`);
-
-        inviteChannel.listen(
-            "invitation",
-            (invitation) => {
-                dispatch(addNotification(invitation));
-            },
-        );
-
         const generalChannel = window.Echo.private(`App.Models.User.${user.id}`);
 
         generalChannel.listen(
@@ -75,7 +65,6 @@ export default function NotificationDropdown({ user }) {
         getNotifications();
 
         return () => {
-            inviteChannel.stopListening("invitation");
             generalChannel.stopListening("refreshNotifications");
         }
 
@@ -165,7 +154,7 @@ export default function NotificationDropdown({ user }) {
                         Notifications
                     </div>
                     {notifications.length > 0 ? (
-                        <div className="h-80">
+                        <div className="h-80 mb-2">
                             <List
                                 height={320}
                                 itemCount={notifications.length}

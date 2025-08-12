@@ -15,9 +15,6 @@ export default function TaskActivities({ task, activities, setActivities }) {
     const user = useSelector(getUser);
     const [enableCommentInput, setEnableCommentInput] = useState(false);
     const [showActions, setShowActions] = useState(true);
-    const shownActivities = showActions ? activities : activities.filter(activity =>
-        activity.activityDetails.type !== 'action'
-    );
     const { workspaceRole, boardRole } = useSelector(state => getUserRoles(state, user.id));
     const isTaskMember = task?.users?.some(taskUser => taskUser.id === user.id);
     const toggleShowActions = () => {
@@ -118,7 +115,6 @@ export default function TaskActivities({ task, activities, setActivities }) {
 
     const activityRow = useCallback(({ index, style }) => {
         const activity = activities[index];
-        console.log(activity);
         if (!activity) return null;
 
         if (activity?.activityDetails?.type === 'action' && showActions) {
