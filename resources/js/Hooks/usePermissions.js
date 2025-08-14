@@ -123,6 +123,10 @@ export default function usePermissions() {
             return actingUser.id === targetUser.id;
         }
 
+        if(actingUser.id === targetUser.id){
+            return true;
+        }
+
         if (actingUser.workspaceRole === 'owner') {
             return true;
         }

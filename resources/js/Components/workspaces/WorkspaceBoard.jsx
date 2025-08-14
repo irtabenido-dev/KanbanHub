@@ -22,7 +22,7 @@ export default function WorkspaceBoard({ board }) {
 
     return (
         <div className='h-[7.5rem] w-[15rem] bg-gray-200 rounded-xl'>
-            {(board.hasAccess || (userBoardRole === 'owner' || userBoardRole === 'admin')) &&
+            {(board.hasAccess && !board.blacklisted || (userBoardRole === 'owner' || userBoardRole === 'admin')) &&
                 <Link
                     href={route('board.index', { workspaceId: board.workspaceId, id: board.id })}
                     className="h-full flex flex-shrink-0 justify-center items-center">

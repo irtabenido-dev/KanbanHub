@@ -10,16 +10,20 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class TaskDeleteAttachment
+class TaskDeleteAttachment implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    /**
-     * Create a new event instance.
-     */
-    public function __construct()
+    public $fileId;
+    public $taskId;
+    public $senderId;
+    public $activityToBeSentAsResponse;
+    public function __construct($fileId, $taskId, $senderId, $activity)
     {
-        //
+        $this->fileId = $fileId;
+        $this->taskId = $taskId;
+        $this->senderId = $senderId;
+        $this->activityToBeSentAsResponse = $activity;
     }
 
     /**
@@ -30,7 +34,19 @@ class TaskDeleteAttachment
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel('channel-name'),
+            new PrivateChannel("task.{$this->taskId}"),
+        ];
+    }
+
+    public function broadcastAs(){
+        return "task.delete.file";
+    }
+
+    public function broadcastWith(){
+        return [
+            'fileId' => $this->fileId,
+            'activity' => $this->activityToBeSentAsResponse,
+            'senderId' => $this->senderId
         ];
     }
 }

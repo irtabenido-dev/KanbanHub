@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Events\RefreshNotifications;
+use App\Events\TaskAddAttachment;
 use App\Events\TaskAddComment;
+use App\Events\TaskDeleteAttachment;
 use App\Events\TaskDeleteComment;
 use App\Events\TaskEditComment;
 use App\Events\TaskRemoveDeadline;
@@ -769,7 +771,7 @@ class TaskController extends Controller
 
             $activity = TaskActivity::findOrFail($generatedId);
 
-            return response()->json([
+            $activityToBeSentAsResponse = [
                 'url' => Storage::url($path),
                 'uploadedFile' => [
                     'id' => $uploadedFile->id,
@@ -788,7 +790,15 @@ class TaskController extends Controller
                     'activityDetails' => $activity->activity_details,
                     'created_at' => $activity->created_at
                 ]
-            ], 200);
+            ];
+
+            event(new TaskAddAttachment(
+                $user->id,
+                $request->taskId,
+                $activityToBeSentAsResponse['activity']
+            ));
+
+            return response()->json($activityToBeSentAsResponse);
         }
         return response('No file uploaded', 400);
     }
@@ -828,20 +838,29 @@ class TaskController extends Controller
 
         $activity = TaskActivity::findOrFail($generateId);
 
+        $activityToBeSentAsResponse = [
+            'id' => $activity->id,
+            'taskId' => $activity->task_id,
+            'userDetails' => [
+                'id' => $activity->user_details['id'],
+                'name' => $activity->user_details['name'],
+                'profilePicture' => $activity->user_details['profilePicture']
+            ],
+            'activityDetails' => $activity->activity_details,
+            'created_at' => $activity->created_at
+        ];
+
+        event(new TaskDeleteAttachment(
+            $uploadedFileActivity->activity_details['id'],
+            $uploadedFileActivity->task_id,
+            $user->id,
+            $activityToBeSentAsResponse
+        ));
+
         $uploadedFileActivity->delete();
 
         return response()->json([
-            'activity' => [
-                'id' => $activity->id,
-                'taskId' => $activity->task_id,
-                'userDetails' => [
-                    'id' => $activity->user_details['id'],
-                    'name' => $activity->user_details['name'],
-                    'profilePicture' => $activity->user_details['profilePicture']
-                ],
-                'activityDetails' => $activity->activity_details,
-                'created_at' => $activity->created_at
-            ]
+            'activity' => $activityToBeSentAsResponse
         ]);
     }
 

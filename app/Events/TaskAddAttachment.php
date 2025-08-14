@@ -10,27 +10,35 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class TaskAddAttachment
+class TaskAddAttachment implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    /**
-     * Create a new event instance.
-     */
-    public function __construct()
+    public $senderId;
+    public $taskId;
+    public $activityToBeSentAsResponse;
+    public function __construct($senderId, $taskId, $activityToBeSentAsResponse)
     {
-        //
+        $this->senderId = $senderId;
+        $this->taskId = $taskId;
+        $this->activityToBeSentAsResponse = $activityToBeSentAsResponse;
     }
 
-    /**
-     * Get the channels the event should broadcast on.
-     *
-     * @return array<int, \Illuminate\Broadcasting\Channel>
-     */
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel('channel-name'),
+            new PrivateChannel("task.{$this->taskId}"),
+        ];
+    }
+
+    public function broadcastAs(){
+        return "task.add.file";
+    }
+
+    public function broadcastWith(){
+        return [
+            'senderId' => $this->senderId,
+            'activity' => $this->activityToBeSentAsResponse
         ];
     }
 }

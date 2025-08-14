@@ -40,6 +40,13 @@ export default function TaskActivities({ task, activities, setActivities }) {
         );
     };
 
+    const deleteFile = (id) => {
+        setActivities(prev => (prev.filter(activity =>
+            !(activity.activityDetails.type === 'attachment' &&
+                activity.activityDetails.id === id)
+        )));
+    };
+
     const editor = useEditor({
         extensions: [
             StarterKit.configure({
@@ -201,10 +208,26 @@ export default function TaskActivities({ task, activities, setActivities }) {
                 deleteComment(data.commentId);
             };
         });
+
+        taskChannel.listen('.task.add.file', (data) => {
+            if (data.senderId !== user.id) {
+                setActivities(prev => [data.activity, ...prev]);
+            };
+        });
+
+        taskChannel.listen('.task.delete.file', (data) => {
+            if (data.senderId !== user.id) {
+                deleteFile(data.fileId);
+                setActivities(prev => [data.activity, ...prev]);
+            };
+        });
+
         return () => {
             taskChannel.stopListening('.task.add.comment');
             taskChannel.stopListening('.task.edit.comment');
             taskChannel.stopListening('.task.delete.comment');
+            taskChannel.stopListening('.task.add.file');
+            taskChannel.stopListening('.task.delete.file');
         }
     }, [task.id]);
 
