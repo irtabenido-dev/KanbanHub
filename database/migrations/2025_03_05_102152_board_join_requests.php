@@ -13,11 +13,19 @@ return new class extends Migration
     {
         Schema::create('board_join_requests', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->uuid('board_id');
-            $table->unsignedBigInteger('user_id');
+            // $table->uuid('board_id');
+            // $table->unsignedBigInteger('user_id');
             $table->enum('status', ['pending', 'approved', 'rejected'])
                 ->default('pending');
             $table->timestamps();
+
+            $table->foreignUuid('board_id')
+                ->constrained()
+                ->onDelete('cascade');
+            $table->foreignId('user_id')
+                ->constrained()
+                ->onDelete('cascade');
+            $table->unique(['user_id', 'board_id']);
         });
     }
 

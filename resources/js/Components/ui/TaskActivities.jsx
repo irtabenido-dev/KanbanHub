@@ -1,6 +1,6 @@
 import { getUser } from "@/Features/user/userSlice";
 import { Tooltip, Typography } from "@material-tailwind/react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
@@ -11,16 +11,32 @@ import ActivityAttachment from "./ActivityAttachment";
 import { getUserRoles } from "@/Features/board/boardSlice";
 import { VariableSizeList as List } from 'react-window';
 
-export default function TaskActivities({ task, activities, setActivities }) {
+export default function TaskActivities({ task, activities, setActivities, attachmentNotEmpty }) {
     const user = useSelector(getUser);
     const [enableCommentInput, setEnableCommentInput] = useState(false);
     const [showActions, setShowActions] = useState(true);
     const { workspaceRole, boardRole } = useSelector(state => getUserRoles(state, user.id));
     const isTaskMember = task?.users?.some(taskUser => taskUser.id === user.id);
+    const [filteredActivities, setFilteredActivities] = useState([]);
+    const listRef = useRef();
+
     const toggleShowActions = () => {
-        setShowActions(prev => !prev);
+        setShowActions(prev => {
+            const upatedPrev = !prev;
+
+            if (upatedPrev) {
+                setFilteredActivities(activities);
+            } else {
+                setFilteredActivities(activities.filter(activity =>
+                    activity.activityDetails.type !== 'action'
+                ));
+            }
+            return upatedPrev;
+        });
     };
+
     const canInteract = (workspaceRole !== 'member' || boardRole !== 'member') || isTaskMember;
+
     const updateComment = (id, comment) => {
         setActivities((prev) =>
             prev.map((activity) =>
@@ -105,7 +121,7 @@ export default function TaskActivities({ task, activities, setActivities }) {
     };
 
     const getItemSize = (index) => {
-        const activity = activities[index];
+        const activity = filteredActivities[index];
 
         let baseHeight = 0;
 
@@ -121,10 +137,10 @@ export default function TaskActivities({ task, activities, setActivities }) {
     };
 
     const activityRow = useCallback(({ index, style }) => {
-        const activity = activities[index];
+        const activity = filteredActivities[index];
         if (!activity) return null;
 
-        if (activity?.activityDetails?.type === 'action' && showActions) {
+        if (activity?.activityDetails?.type === 'action') {
             return (
                 <div style={style}>
                     <ActivityAction
@@ -156,7 +172,24 @@ export default function TaskActivities({ task, activities, setActivities }) {
         } else {
             return null;
         }
-    });
+
+    }, [filteredActivities, updateComment, deleteComment]);
+
+    useEffect(()=>{
+        if(listRef.current){
+            listRef.current.resetAfterIndex(0);
+        }
+    }, [filteredActivities]);
+
+    useEffect(() => {
+        if (showActions) {
+            setFilteredActivities(activities);
+        } else {
+            setFilteredActivities(activities.filter(activity =>
+                activity.activityDetails.type !== 'action'
+            ));
+        }
+    }, [activities, showActions]);
 
     useEffect(() => {
         if (editor) {
@@ -426,8 +459,9 @@ export default function TaskActivities({ task, activities, setActivities }) {
                         }
                     })} */}
                     <List
-                        height={385}
-                        itemCount={activities.length}
+                        ref={listRef}
+                        height={attachmentNotEmpty ? 420 : 500}
+                        itemCount={filteredActivities.length}
                         itemSize={getItemSize}
                         width="100%"
                         overscanCount={2}

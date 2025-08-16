@@ -12,12 +12,17 @@ return new class extends Migration
     public function up(): void
     {
         //
-        Schema::create('attachments', function(Blueprint $table){
+        Schema::create('attachments', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('task_id');
-            $table->unsignedBigInteger(column: 'user_id');
+            // $table->uuid('task_id');
+            // $table->unsignedBigInteger(column: 'user_id');
             $table->json('attachment_attributes');
             $table->timestamps();
+
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignUuid('task_id')
+                ->constrained()
+                ->onDelete('cascade');
         });
     }
 

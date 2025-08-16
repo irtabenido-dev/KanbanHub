@@ -26,6 +26,12 @@ class Workspace extends Model
         ->withTimestamps();
     }
 
+    protected static function booted(){
+        static::deleting(function($workspace){
+            $workspace->blacklistedMembers()->delete();
+        });
+    }
+
     public function owner(): BelongsTo{
         return $this->belongsTo(User::class, 'owner_id');
     }

@@ -12,16 +12,22 @@ return new class extends Migration
     public function up(): void
     {
         //
-        Schema::create('invitations', function(Blueprint $table){
+        Schema::create('invitations', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('workspace_id');
-            $table->string('invited_id');
-            $table->string('inviter_id');
+            // $table->uuid('workspace_id');
+            // $table->string('invited_id');
+            // $table->string('inviter_id');
             $table->string('role');
             $table->string('invitation_code');
             $table->timestamp('expires_at')->nullable();
             $table->timestamp('used_at')->nullable();
             $table->timestamps();
+
+            $table->foreignId('invited_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('inviter_id')->constrained('users')->onDelete('cascade');
+            $table->foreignUuid('workspace_id')
+                ->constrained()
+                ->onDelete('cascade');
         });
     }
 

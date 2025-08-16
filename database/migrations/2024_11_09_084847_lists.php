@@ -12,15 +12,18 @@ return new class extends Migration
     public function up(): void
     {
         //
-        Schema::create('lists', function(Blueprint $table){
+        Schema::create('lists', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('board_id');
+            // $table->uuid('board_id');
             $table->string('name');
             $table->integer('position_number');
             $table->timestamp('archived_at')->nullable();
             $table->timestamps();
-        });
 
+            $table->foreignUuid('board_id')
+                ->constrained()
+                ->onDelete('cascade');
+        });
     }
 
     /**

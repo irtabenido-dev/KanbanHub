@@ -12,10 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         //
-        Schema::create('tasks', function(Blueprint $table){
+        Schema::create('tasks', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->uuid('board_id');
-            $table->uuid('list_id');
+            // $table->uuid('board_id');
+            // $table->uuid('list_id');
             $table->string('title');
             $table->json('description')->nullable();
             $table->dateTime('deadline')->nullable();
@@ -24,6 +24,14 @@ return new class extends Migration
             $table->integer('position_number');
             $table->timestamp('archived_at')->nullable();
             $table->timestamps();
+
+            $table->foreignUuid('board_id')
+                ->constrained()
+                ->onDelete('cascade');
+
+            $table->foreignUuid('list_id')
+                ->constrained()
+                ->onDelete('cascade');
         });
     }
 

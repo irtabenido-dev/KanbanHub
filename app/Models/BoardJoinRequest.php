@@ -19,9 +19,8 @@ class BoardJoinRequest extends Model
     protected $casts = [
         'id' => 'string',
     ];
-    protected static function boot()
+    protected static function booted()
     {
-        parent::boot();
         static::creating(function ($model) {
             $model->id = (string) Str::uuid();
         });

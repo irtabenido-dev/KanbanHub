@@ -12,12 +12,18 @@ return new class extends Migration
     public function up(): void
     {
         //
-        Schema::create('board_members', function(Blueprint $table){
+        Schema::create('board_members', function (Blueprint $table) {
             $table->id()->primary();
-            $table->uuid('board_id');
-            $table->unsignedBigInteger('user_id');
+            // $table->uuid('board_id');
+            // $table->unsignedBigInteger('user_id');
             $table->enum('role', ['owner', 'admin', 'member']);
             $table->timestamps();
+
+            $table->unique(['user_id', 'board_id']);
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignUuid('board_id')
+                ->constrained()
+                ->onDelete('cascade');
         });
     }
 

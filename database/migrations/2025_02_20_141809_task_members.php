@@ -12,11 +12,17 @@ return new class extends Migration
     public function up(): void
     {
         //
-        Schema::create('task_members', function(Blueprint $table){
+        Schema::create('task_members', function (Blueprint $table) {
             $table->id()->primary();
-            $table->uuid('task_id');
-            $table->unsignedBigInteger('user_id');
+            // $table->uuid('task_id');
+            // $table->unsignedBigInteger('user_id');
             $table->timestamps();
+
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignUuid('task_id')
+                ->constrained()
+                ->onDelete('cascade');
+            $table->unique(['user_id', 'task_id']);
         });
     }
 

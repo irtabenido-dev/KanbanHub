@@ -13,13 +13,17 @@ return new class extends Migration
     {
         Schema::create('boards', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->uuid('workspace_id');
+            // $table->uuid('workspace_id');
             $table->string('name');
             $table->boolean('private');
-            $table->unsignedBigInteger('owner_id');
+            // $table->unsignedBigInteger('owner_id');
             $table->timestamp('archived_at')->nullable();
             $table->timestamps();
-            // $table->foreign('workspace_id')->references('id')->on('workspaces')->onDelete('cascade');
+
+            $table->foreignId('owner_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreignUuid('workspace_id')
+                ->constrained()
+                ->onDelete('cascade');
         });
     }
 

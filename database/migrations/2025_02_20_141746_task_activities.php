@@ -12,12 +12,16 @@ return new class extends Migration
     public function up(): void
     {
         //
-        Schema::create('task_activities', function(Blueprint $table){
+        Schema::create('task_activities', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->uuid('task_id');
+            // $table->uuid('task_id');
             $table->json('user_details');
             $table->json('activity_details');
             $table->timestamps();
+
+            $table->foreignUuid('task_id')
+                ->constrained()
+                ->onDelete('cascade');
         });
     }
 

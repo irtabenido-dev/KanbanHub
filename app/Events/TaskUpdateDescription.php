@@ -2,7 +2,7 @@
 
 namespace App\Events;
 
-use App\Models\TaskActivities;
+use App\Models\TaskActivity;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -27,7 +27,7 @@ class TaskUpdateDescription implements ShouldBroadcast
         $this->boardId = $boardId;
         $this->taskId = $taskId;
         $this->userId = $userId;
-        $this->activity = TaskActivities::findOrFail($activityId);
+        $this->activity = TaskActivity::findOrFail($activityId);
         $this->updatedDescription = $updatedDescription;
     }
 

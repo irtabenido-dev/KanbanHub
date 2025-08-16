@@ -11,14 +11,21 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('blacklist_members', function(Blueprint $table){
+        Schema::create('blacklist_members', function (Blueprint $table) {
             $table->id();
             $table->string('blacklistable_type');
             $table->uuid('blacklistable_id');
-            $table->unsignedBigInteger('user_id');
+            // $table->unsignedBigInteger('user_id');
             $table->timestamps();
+
+            $table->foreignId('user_id')
+                ->constrained()
+                ->onDelete('cascade');
+
+            $table->index(['blacklistable_type', 'blacklistable_id']);
         });
     }
+
 
     /**
      * Reverse the migrations.

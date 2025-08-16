@@ -330,9 +330,9 @@ export default function BoardTaskModal({ show, toggle, listId, taskId }) {
                             </svg>
                         </IconButton>
                     </div>
-                    <div className="flex flex-col-reverse md:flex-row  gap-2 h-full mt-4 text-blue-gray-900">
-                        <div className="w-full md:w-4/5">
-                            <div className="flex flex-col h-full ">
+                    <div className="flex flex-col-reverse md:flex-row gap-2 flex-1 mt-4 text-blue-gray-900 min-h-0">
+                        <div className="w-full md:w-4/5 flex flex-col min-h-0">
+                            <div className="flex flex-col flex-1 min-h-0 ">
                                 <TaskAddDueDate
                                     task={task}
                                     setActivities={setActivities}
@@ -341,9 +341,9 @@ export default function BoardTaskModal({ show, toggle, listId, taskId }) {
                                 <TaskDescription task={task} setActivities={setActivities} />
                                 <TaskAttachments task={task} files={files} setFiles={setFiles} setActivities={setActivities} />
                                 {fetchingActivities ?
-                                    <Spinner className="m-auto"/>
+                                    <Spinner className="m-auto" />
                                     :
-                                    <TaskActivities task={task} activities={activities} setActivities={setActivities} />
+                                    <TaskActivities task={task} activities={activities} setActivities={setActivities} attachmentNotEmpty={files?.length > 0} />
                                 }
                             </div>
                         </div>

@@ -13,10 +13,16 @@ return new class extends Migration
     {
         Schema::create('workspace_user_role', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id');
-            $table->uuid('workspace_id');
+            // $table->unsignedBigInteger('user_id');
+            // $table->uuid('workspace_id');
             $table->enum('role', ['owner', 'admin', 'member']);
             $table->timestamps();
+
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignUuid('workspace_id')
+                ->constrained()
+                ->onDelete('cascade');
+            $table->unique(['user_id', 'workspace_id']);
         });
     }
 

@@ -20,6 +20,13 @@ class Board extends Model
         'id' => 'string',
     ];
 
+    protected static function booted()
+    {
+        static::deleting(function ($board) {
+            $board->blacklistedMembers()->delete();
+        });
+    }
+
     public function workspace(): BelongsTo
     {
         return $this->belongsTo(Workspace::class);

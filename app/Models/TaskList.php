@@ -19,9 +19,8 @@ class TaskList extends Model
     protected $keyType = 'string';
     public $incrementing = false;
 
-    protected static function boot()
+    protected static function booted()
     {
-        parent::boot();
         static::creating(function ($taskList) {
             $taskList->id = (string) Str::uuid();
         });
