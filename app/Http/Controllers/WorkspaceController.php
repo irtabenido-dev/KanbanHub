@@ -189,7 +189,7 @@ class WorkspaceController extends Controller
 
         return response()->json([
             'workspace' => $mappedWorkspace
-        ]);
+        ], 201);
     }
 
     public function update(Request $request)
@@ -200,8 +200,15 @@ class WorkspaceController extends Controller
         ]);
 
         $user = Auth::user();
-        $workspace = Workspace::findOrFail($request->id)
-            ->with('owner')->first();
+        $workspace = Workspace::with('owner', 'users')
+            ->findOrFail($request->id);
+
+        if ($workspace->owner->id !== $user->id) {
+            abort(403);
+        }
+
+        $oldWorkspaceName = $workspace->name;
+
         $workspace->name = $request->name;
         $workspace->save();
 
@@ -211,7 +218,7 @@ class WorkspaceController extends Controller
         Notification::send(
             $users,
             new UpdatedWorkspace(
-                $workspace->name,
+                $oldWorkspaceName,
                 $request->name,
                 $workspace->id,
                 $workspace->owner->name
@@ -228,6 +235,7 @@ class WorkspaceController extends Controller
     public function archive(Request $request)
     {
         $workspace = Workspace::findOrFail($request->id);
+
         $workspace->archived_at = Carbon::now();
         $workspace->save();
 
@@ -244,7 +252,7 @@ class WorkspaceController extends Controller
 
         return response()->json([
             'id' => $request->id
-        ]);
+        ], 200);
     }
 
     public function unarchive(Request $request)
@@ -294,12 +302,23 @@ class WorkspaceController extends Controller
 
         return response()->json([
             'restoredWorkspace' => $mappedWorkspace
-        ]);
+        ], 200);
     }
 
     public function destroy(Request $request)
     {
+        $request->validate([
+            'id' => 'required|exists:workspaces,id',
+            'userId' => 'required|exists:users,id'
+        ]);
+
+
         $workspace = Workspace::findOrFail($request->id);
+
+        if ($workspace->owner_id !== $request->userId) {
+            abort(403);
+        }
+
         $users = $workspace->users;
         $owner = $workspace->owner;
 

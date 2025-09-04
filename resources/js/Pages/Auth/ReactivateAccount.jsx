@@ -4,10 +4,9 @@ import { Button, Typography } from "@material-tailwind/react";
 
 export default function ReactivateAccount({ message }) {
     const { props } = usePage();
-    const { data, setData, post } = useForm({
+    const { data, post } = useForm({
         email: props.email
     });
-    console.log(message);
 
     const submit = () => {
         post(route('account.reactivation-request'), data);
@@ -20,9 +19,6 @@ export default function ReactivateAccount({ message }) {
                     <div className="border  p-6 rounded-xl shadow-xl w-[24rem]">
                         <Typography variant="h5" color="white" className="text-center mb-4">
                             Your account is currently deactivated.
-                        </Typography>
-                        <Typography variant="paragraph" color="white" className="text-center mb-6">
-                            Please request reactivation to regain access to your account.
                         </Typography>
                         {message && (
                             <Typography variant="paragraph" color="green">

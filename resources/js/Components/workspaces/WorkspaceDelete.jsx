@@ -10,8 +10,10 @@ import {
 import { useDispatch } from "react-redux";
 import axios from "axios";
 import { removeWorkspace } from "@/Features/workspaces/workspacesSlice";
+import { usePage } from "@inertiajs/react";
 
 export default function WorkspaceDelete({ workspace, toggle }) {
+    const user = usePage().props.auth.user;
     const dispatch = useDispatch();
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [processing, setProcessing] = useState(false);
@@ -23,7 +25,12 @@ export default function WorkspaceDelete({ workspace, toggle }) {
     const submit = useCallback(async () => {
         setProcessing(true);
         try {
-            const response = await axios.delete(route('workspace.destroy', workspace.id));
+            const response = await axios.delete(route('workspace.destroy', workspace.id), {
+                data: {
+                    id: workspace.id,
+                    userId: user.id
+                }
+            });
             dispatch(removeWorkspace(response.data.id));
             setProcessing(false);
             toggleDelete();

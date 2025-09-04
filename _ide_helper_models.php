@@ -16,12 +16,12 @@ namespace App\Models{
  * 
  *
  * @property string $id
- * @property string $task_id
- * @property int $user_id
  * @property array<array-key, mixed> $attachment_attributes
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \App\Models\Task|null $task
+ * @property int $user_id
+ * @property string $task_id
+ * @property-read \App\Models\Task $task
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Attachment newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Attachment newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Attachment query()
@@ -42,11 +42,11 @@ namespace App\Models{
  * @property int $id
  * @property string $blacklistable_type
  * @property string $blacklistable_id
- * @property int $user_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property int $user_id
  * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $blacklistable
- * @property-read \App\Models\User|null $user
+ * @property-read \App\Models\User $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BlacklistMember newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BlacklistMember newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BlacklistMember query()
@@ -65,25 +65,25 @@ namespace App\Models{
  * 
  *
  * @property string $id
- * @property string $workspace_id
  * @property string $name
  * @property int $private
- * @property int $owner_id
  * @property string|null $archived_at
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property int $owner_id
+ * @property string $workspace_id
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\BoardJoinRequest> $accessRequests
  * @property-read int|null $access_requests_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\BlacklistMember> $blacklistedMembers
  * @property-read int|null $blacklisted_members_count
- * @property-read \App\Models\User|null $owner
+ * @property-read \App\Models\User $owner
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Board> $relatedBoards
  * @property-read int|null $related_boards_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\TaskList> $taskLists
  * @property-read int|null $task_lists_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $users
  * @property-read int|null $users_count
- * @property-read \App\Models\Workspace|null $workspace
+ * @property-read \App\Models\Workspace $workspace
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Board newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Board newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Board query()
@@ -104,13 +104,13 @@ namespace App\Models{
  * 
  *
  * @property string $id
- * @property string $board_id
- * @property int $user_id
  * @property string $status
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \App\Models\Board|null $board
- * @property-read \App\Models\User|null $user
+ * @property string $board_id
+ * @property int $user_id
+ * @property-read \App\Models\Board $board
+ * @property-read \App\Models\User $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BoardJoinRequest newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BoardJoinRequest newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BoardJoinRequest query()
@@ -129,11 +129,11 @@ namespace App\Models{
  * 
  *
  * @property int $id
- * @property string $board_id
- * @property int $user_id
  * @property string $role
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property int $user_id
+ * @property string $board_id
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BoardMember newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BoardMember newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BoardMember query()
@@ -152,15 +152,15 @@ namespace App\Models{
  * 
  *
  * @property int $id
- * @property string $workspace_id
- * @property string $invited_id
- * @property string $inviter_id
  * @property string $role
  * @property string $invitation_code
  * @property string|null $expires_at
  * @property string|null $used_at
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property int $invited_id
+ * @property int $inviter_id
+ * @property string $workspace_id
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Invitation newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Invitation newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Invitation query()
@@ -183,8 +183,6 @@ namespace App\Models{
  * 
  *
  * @property string $id
- * @property string $board_id
- * @property string $list_id
  * @property string $title
  * @property string|null $description
  * @property string|null $deadline
@@ -194,10 +192,12 @@ namespace App\Models{
  * @property string|null $archived_at
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string $board_id
+ * @property string $list_id
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Attachment> $attachments
  * @property-read int|null $attachments_count
- * @property-read \App\Models\Board|null $board
- * @property-read \App\Models\TaskList|null $list
+ * @property-read \App\Models\Board $board
+ * @property-read \App\Models\TaskList $list
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\TaskActivity> $task_activities
  * @property-read int|null $task_activities_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $users
@@ -226,12 +226,12 @@ namespace App\Models{
  * 
  *
  * @property string $id
- * @property string $task_id
  * @property array<array-key, mixed> $user_details
  * @property array<array-key, mixed> $activity_details
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \App\Models\Task|null $task
+ * @property string $task_id
+ * @property-read \App\Models\Task $task
  * @property-read \App\Models\User|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|TaskActivity newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|TaskActivity newQuery()
@@ -251,13 +251,13 @@ namespace App\Models{
  * 
  *
  * @property string $id
- * @property string $board_id
  * @property string $name
  * @property int $position_number
  * @property string|null $archived_at
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \App\Models\Board|null $board
+ * @property string $board_id
+ * @property-read \App\Models\Board $board
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Task> $tasks
  * @property-read int|null $tasks_count
  * @method static \Illuminate\Database\Eloquent\Builder<static>|TaskList newModelQuery()
@@ -279,11 +279,11 @@ namespace App\Models{
  * 
  *
  * @property string $id
- * @property string $task_id
- * @property string $user_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \App\Models\Task|null $task
+ * @property string $user_id
+ * @property string $task_id
+ * @property-read \App\Models\Task $task
  * @method static \Illuminate\Database\Eloquent\Builder<static>|TaskMember newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|TaskMember newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|TaskMember query()
@@ -309,9 +309,11 @@ namespace App\Models{
  * @property string|null $remember_token
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\WorkspaceUser|\App\Models\BoardMember|null $pivot
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Board> $boards
+ * @property-read int|null $boards_count
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
- * @property-read \App\Models\WorkspaceUser|null $pivot
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Workspace> $workspaces
  * @property-read int|null $workspaces_count
  * @method static \Database\Factories\UserFactory factory($count = null, $state = [])
@@ -367,11 +369,11 @@ namespace App\Models{
  * 
  *
  * @property int $id
- * @property int $user_id
- * @property string $workspace_id
  * @property string $role
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property int $user_id
+ * @property string $workspace_id
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkspaceUser newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkspaceUser newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkspaceUser query()

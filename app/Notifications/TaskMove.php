@@ -3,7 +3,7 @@
 namespace App\Notifications;
 
 use App\Models\Task;
-use App\Models\TaskActivities;
+use App\Models\TaskActivity;
 use App\Models\TaskList;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Bus\Queueable;
@@ -26,7 +26,7 @@ class TaskMove extends Notification implements ShouldQueue
 
     public function __construct($activityId, $taskId, $previousListId, $currentListId, $senderId)
     {
-        $this->activity = TaskActivities::findOrFail($activityId);
+        $this->activity = TaskActivity::findOrFail($activityId);
         $task = Task::with('users')->findOrFail($taskId);
         $orderedTaskUsers = $task->users->sortBy('created_at')->values();
         $this->task = [

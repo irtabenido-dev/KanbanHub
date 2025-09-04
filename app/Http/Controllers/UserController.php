@@ -3,13 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Models\BlacklistMember;
+use App\Models\ReactivationKey;
 use App\Models\WorkspaceUser;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Workspace;
+use App\Notifications\AccountReactivationNotification;
 use Carbon\Carbon;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Notification;
+use Inertia\Inertia;
 
 class UserController extends Controller
 {
@@ -24,7 +28,7 @@ class UserController extends Controller
         $workspaceId = $request->workspaceId;
 
         $blacklistedUserIds = BlacklistMember::where('blacklistable_id', $workspaceId)
-        ->where('blacklistable_type', Workspace::class)->pluck('user_id')->toArray();
+            ->where('blacklistable_type', Workspace::class)->pluck('user_id')->toArray();
 
         $users = User::where(function ($query) use ($request) {
             $query->where('name', 'like', "%{$request->searchInput}%")
@@ -204,4 +208,52 @@ class UserController extends Controller
 
         return redirect()->back();
     }
+
+    // public function sendReactivationEmail(Request $request)
+    // {
+    //     $request->validate([
+    //         'email' => 'required|exists:users,email'
+    //     ]);
+
+    //     $user = User::where('email', $request->email)->firstOrFail();
+
+    //     $generatedKey = (new ReactivationKey())->createKey($user->id);
+
+    //     $url = route('account.reactivate', ['key' => $generatedKey->key]);
+
+    //     Notification::route('mail', $request->email)
+    //         ->notify(new AccountReactivationNotification($url));
+
+    //     return response()->noContent();
+    // }
+
+    // public function reactivate(Request $request)
+    // {
+    //     $request->validate([
+    //         'key' => 'required|exists:reactivation_keys,key',
+    //     ]);
+
+    //     $key = ReactivationKey::where('key', $request->key);
+
+    //     if ($key->expires_at->isPast()) {
+    //         $generatedKey = (new ReactivationKey())->createKey($key->user->id);
+
+    //         $url = route('account.reactivate', ['key' => $generatedKey->key]);
+
+    //         Notification::route('mail', $key->user->email)
+    //             ->notify(new AccountReactivationNotification($url));
+
+    //         return Inertia::render('Auth/ReactivateAccount', [
+    //             'email' => $request->query('email', 'test'),
+    //             'expiryMessage' => 'The reactivation link has expired. Please check your email again for a new reactivation link'
+    //         ]);
+    //     }
+
+    //     $user = User::findOrFail($key->user_id);
+
+    //     $user->deactivated_at = null;
+    //     $user->save();
+
+    //     return Inertia::location('/login');
+    // }
 }

@@ -432,32 +432,6 @@ export default function TaskActivities({ task, activities, setActivities, attach
                             }
                         </div>
                     }
-                    {/* {shownActivities?.map((activity) => {
-                        switch (activity?.activityDetails?.type) {
-                            case 'action':
-                                return <ActivityAction
-                                    key={activity.id}
-                                    activity={activity}
-                                />
-                            case 'comment':
-                                return <ActivityComment
-                                    key={activity.id}
-                                    updateComment={updateComment}
-                                    activity={activity}
-                                    deleteComment={deleteComment}
-                                />
-                            case 'attachment':
-                                return canInteract ? (
-                                    <ActivityAttachment
-                                        key={activity.id}
-                                        activity={activity}
-                                    />
-                                )
-                                    :
-                                    null;
-                            default: return;
-                        }
-                    })} */}
                     <List
                         ref={listRef}
                         height={attachmentNotEmpty ? 420 : 500}

@@ -24,12 +24,6 @@ export default function Login({ status, canResetPassword }) {
         <GuestLayout>
             <Head title="Log in" />
 
-            {status && (
-                <div className="mb-4 text-sm font-medium text-green-600">
-                    {status}
-                </div>
-            )}
-
             <form onSubmit={submit} className='border border-gray-200 p-4 rounded-xl w-[24rem]'>
                 <div>
                     <InputLabel htmlFor="email" value="Email" />
@@ -62,7 +56,6 @@ export default function Login({ status, canResetPassword }) {
 
                     <InputError message={errors.password} className="mt-2" />
                 </div>
-
                 <div className="mt-4 block">
                     <label className="flex items-center">
                         <input
@@ -80,7 +73,11 @@ export default function Login({ status, canResetPassword }) {
                         </span>
                     </label>
                 </div>
-
+                {status && (
+                    <div className="my-4 text-sm font-medium text-green-600">
+                        {status}
+                    </div>
+                )}
                 <div className="mt-4 flex items-center justify-end">
                     {canResetPassword && (
                         <Link

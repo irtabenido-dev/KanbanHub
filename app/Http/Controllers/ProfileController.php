@@ -27,17 +27,17 @@ class ProfileController extends Controller
 
         $profileData = $user->profile_data;
 
-        if($request->newPassword){
+        if ($request->newPassword) {
             $user->password = Hash::make($request->newPassword);
         }
 
-        if($request->hasFile('profilePicture')){
-            if($profileData['profilePicture']){
+        if ($request->hasFile('profilePicture')) {
+            if ($profileData['profilePicture']) {
                 Storage::disk('public')->delete($profileData['profilePicture']);
             }
 
             $path = $request->file('profilePicture')
-            ->store('profile_pictures', 'public');
+                ->store('profile_pictures', 'public');
 
             $profileData['profilePicture'] = "/storage/{$path}";
         }
@@ -52,11 +52,22 @@ class ProfileController extends Controller
 
     public function deactivate(Request $request): JsonResponse
     {
-        $request->validate([
-            'password' => ['required', 'current_password'],
-        ]);
-
         $user = $request->user();
+
+        $request->validate([
+            'password' => [
+                'required',
+                'current_password',
+                function ($attribute, $value, $fail) use ($user) {
+                    if (
+                        $user->workspaces()->wherePivot('role', 'owner')->exists()
+                        || $user->boards()->wherePivot('role', 'owner')->exists()
+                    ) {
+                        $fail('You cannot deactivate or delete your account while you are still a owner of a workspace or board');
+                    }
+                }
+            ],
+        ]);
 
         Auth::logout();
 
@@ -69,7 +80,31 @@ class ProfileController extends Controller
         return response()->json(null);
     }
 
-    public function reactivate(Request $request){
+    public function delete(Request $request): JsonResponse
+    {
+        $user = $request->user();
 
+        $request->validate([
+            'password' => [
+                'required',
+                'current_password',
+                function ($attribute, $value, $fail) use ($user) {
+                    if (
+                        $user->workspaces()->wherePivot('role', 'owner')->exists()
+                        || $user->boards()->wherePivot('role', 'owner')->exists()
+                    ) {
+                        $fail('You cannot deactivate or delete your account while you are still a owner of a workspace or board');
+                    }
+                }
+            ],
+        ]);
+
+        Auth::logout();
+
+        $user->delete();
+
+        $request->session()->invalidate();
+
+        return response()->json(null);
     }
 }

@@ -5,7 +5,7 @@ import TextInput from "../ui/TextInput";
 import InputError from "../ui/InputError";
 import { router, usePage } from "@inertiajs/react";
 
-export default function ProfileDelete({ }) {
+export default function ProfileDeactivate({ }) {
     const { props } = usePage();
     const user = props.auth.user;
     const [show, setShow] = useState(false);
@@ -21,23 +21,24 @@ export default function ProfileDelete({ }) {
 
     const submit = async () => {
         try {
-            await axios.post(route('account.delete'), data);
+            await axios.post(route('account.deactivate'), data);
             router.visit('/');
         } catch (errors) {
             setErrors(errors.response.data.errors);
+            console.log(errors);
         }
     };
 
     return (
         <div>
             <Typography variant="h3" color="white" className="pb-2">
-                Delete Account
+                Deactivate Account
             </Typography>
             <Typography variant="paragraph" color="white">
-                Deleting your account is permanent. All your data, services, and content will be permanently removed and cannot be recovered. Some minimal information may be retained as required by law or for security purposes.
+                By deactivating your account, you will lose access to your data, services, and content. Some information may be retained for legal or security reasons.
             </Typography>
             <Button className="mt-4 w-full" color="red" onClick={toggle}>
-                Delete
+                Deactivate
             </Button>
             <Dialog
                 size="xs"
@@ -50,7 +51,7 @@ export default function ProfileDelete({ }) {
             >
                 <DialogBody className="p-4 text-justify">
                     <Typography variant="paragraph">
-                        This action is permanent. Once deleted, your account and all associated data will be irreversibly removed. Are you sure you want to continue?
+                        Deactivating your account will remove access to your data and services
                     </Typography>
                     <Typography variant="paragraph">
                         Please enter your password to proceed with your account deactivation
@@ -60,7 +61,8 @@ export default function ProfileDelete({ }) {
                         className="w-full mt-4"
                         onChange={(e) => setData({ ...data, password: e.target.value })}
                     />
-                    {errors && <InputError className="text-left mt-2" message={errors.password} />}
+                    {errors?.password && <InputError className="text-left mt-2" message={errors.password} />}
+                    {errors?.owner && <InputError className="text-left mt-2" message={errors.owner} />}
                     <div className="flex flex-row gap-2 justify-center mt-4">
                         <Button className="w-full" color="red" onClick={submit}>Proceed</Button>
                         <Button className="w-full" color="gray" onClick={toggle}>Cancel</Button>

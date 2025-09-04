@@ -11,11 +11,11 @@ use App\Http\Controllers\TaskListController;
 use App\Http\Controllers\WorkspaceController;
 use App\Http\Controllers\WorkspaceUsersController;
 use App\Http\Controllers\UserController;
-use App\Models\BoardMembers;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 
 Route::get('/', function () {
     if (Auth::check()) {
@@ -30,11 +30,20 @@ Route::get('/', function () {
     ]);
 });
 
+// Route::get('/account/reactivateRequest', function (Request $request) {
+//     return Inertia::render('Auth/ReactivateAccount', [
+//         'email' => $request->query('email', 'test')
+//     ]);
+// })->name('account.reactivateRequest');
+
+// Route::post('/account/reactivate/{key}', [UserController::class, 'reactivate'])->name('account.reactivate');
+// Route::post('/account/sendReactivationRequest', [UserController::class, 'sendReactivationEmail'])->name('account.send.reactivationRequest');
+
 Route::middleware('auth')->group(function () {
+    Route::post('/account/deactivate', [ProfileController::class, 'deactivate'])->name('account.deactivate');
+
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::post('/profile/deactivate', [ProfileController::class, 'deactivate'])->name('profile.deactivate');
-    Route::post('/profile/reactivate', [ProfileController::class, 'reactivate'])->name('profile.reactivate');
 
     Route::get('/users/blacklisted', [BlacklistController::class, 'getBlacklistedUsers'])->name('user.blacklisted');
     Route::post('/users/blacklist', [BlacklistController::class, 'addUserToBlacklist'])->name('user.blacklist');

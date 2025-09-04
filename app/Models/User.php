@@ -43,7 +43,6 @@ class User extends Authenticatable
     protected function casts(): array
     {
         return [
-            'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'profile_data' => 'array'
         ];
@@ -52,6 +51,10 @@ class User extends Authenticatable
     protected static function booted(){
         static::creating(function($user){
             $user->profile_data ??= ['profilePicture' => null, 'theme' => 'dark'];
+        });
+
+        static::deleting(function($user){
+            $user->notifications()->delete();
         });
     }
 
@@ -62,5 +65,14 @@ class User extends Authenticatable
         ->using(WorkspaceUser::class)
         ->withPivot('role')
         ->withTimestamps();
+    }
+
+    public function boards(): BelongsToMany{
+        return $this->belongsToMany(
+            Board::class,
+            'board_members')
+            ->using(BoardMember::class)
+            ->withPivot('role')
+            ->withTimestamps();
     }
 }

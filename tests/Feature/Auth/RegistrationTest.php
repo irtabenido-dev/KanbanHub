@@ -3,6 +3,7 @@
 namespace Tests\Feature\Auth;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 
 class RegistrationTest extends TestCase
@@ -14,6 +15,12 @@ class RegistrationTest extends TestCase
         $response = $this->get('/register');
 
         $response->assertStatus(200);
+
+        $response->assertInertia(
+            fn (Assert $page) =>
+            $page->component('Auth/Register')
+            ->has('errors')
+        );
     }
 
     public function test_new_users_can_register(): void
@@ -26,6 +33,6 @@ class RegistrationTest extends TestCase
         ]);
 
         $this->assertAuthenticated();
-        $response->assertRedirect(route('dashboard', absolute: false));
+        $response->assertRedirect(route('workspaces.index', absolute: false));
     }
 }
