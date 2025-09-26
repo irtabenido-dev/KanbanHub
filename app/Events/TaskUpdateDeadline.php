@@ -2,7 +2,7 @@
 
 namespace App\Events;
 
-use App\Models\TaskActivities;
+use App\Models\TaskActivity;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -26,7 +26,7 @@ class TaskUpdateDeadline implements ShouldBroadcast
         $this->listId = $listId;
         $this->taskId = $taskId;
         $this->boardId = $boardId;
-        $this->activity = TaskActivities::findOrFail($activityId);
+        $this->activity = TaskActivity::findOrFail($activityId);
         $this->senderId = $senderId;
         $this->date = $date;
     }

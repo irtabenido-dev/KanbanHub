@@ -2,11 +2,9 @@
 
 namespace App\Events;
 
-use App\Models\TaskActivities;
+use App\Models\TaskActivity;
 use App\Models\User;
-use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
@@ -28,7 +26,7 @@ class TaskUserAdded implements ShouldBroadcast
         $this->listId = $listId;
         $this->taskId = $taskId;
         $this->boardId = $boardId;
-        $this->activity = TaskActivities::findOrFail($activityId);
+        $this->activity = TaskActivity::findOrFail($activityId);
         $this->addedUser = User::findOrFail($addedUserId);
         $this->senderId = $senderId;
     }

@@ -48,24 +48,26 @@ class WorkspaceUsersController extends Controller
         return response()->json(['members' => $members], 200);
     }
 
-    public function removeMember(Request $request)
+    public function removeMember(Request $request, $workspaceId, $userId)
     {
-        WorkspaceUser::where('workspace_id', $request->workspaceId)
-        ->where('user_id', $request->userId)->delete();
-        $workspace = Workspace::findOrFail($request->workspaceId);
 
-        $notificationRecipient = User::findOrFail($request->userId);
+        WorkspaceUser::where('workspace_id', $workspaceId)
+        ->where('user_id', $userId)->delete();
+
+        $workspace = Workspace::findOrFail($workspaceId);
+
+        $notificationRecipient = User::findOrFail($userId);
 
         Notification::send($notificationRecipient, new WorkspaceRemovedUser(
-            $request->userId,
-            $request->workspaceId,
+            $userId,
+            $workspaceId,
             $workspace->name,
             Auth::id()
         ));
 
-        event(new RefreshNotifications($request->userId));
+        event(new RefreshNotifications($userId));
 
-        return response()->json(null, 204);
+        return response()->noContent(204);
     }
 
     public function updateMember(Request $request)
@@ -127,6 +129,6 @@ class WorkspaceUsersController extends Controller
 
         event(new RefreshNotifications($request->targetId));
 
-        return response()->json(null, 204);
+        return response()->noContent(204);
     }
 }

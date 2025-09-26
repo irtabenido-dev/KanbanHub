@@ -84,6 +84,7 @@ namespace App\Models{
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $users
  * @property-read int|null $users_count
  * @property-read \App\Models\Workspace $workspace
+ * @method static \Database\Factories\BoardFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Board newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Board newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Board query()
@@ -202,6 +203,7 @@ namespace App\Models{
  * @property-read int|null $task_activities_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $users
  * @property-read int|null $users_count
+ * @method static \Database\Factories\TaskFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Task newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Task newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Task query()
@@ -260,6 +262,7 @@ namespace App\Models{
  * @property-read \App\Models\Board $board
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Task> $tasks
  * @property-read int|null $tasks_count
+ * @method static \Database\Factories\TaskListFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|TaskList newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|TaskList newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|TaskList query()
@@ -351,6 +354,7 @@ namespace App\Models{
  * @property-read \App\Models\WorkspaceUser|null $pivot
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $users
  * @property-read int|null $users_count
+ * @method static \Database\Factories\WorkspaceFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Workspace newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Workspace newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Workspace query()

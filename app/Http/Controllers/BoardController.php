@@ -181,7 +181,7 @@ class BoardController extends Controller
                 'created_at' => $board->created_at,
                 'hasAccess' => $accessChecker->canAccessBoard($user, $board),
             ]
-        ]);
+        ], 200);
     }
 
     public function update(Request $request)
@@ -195,7 +195,7 @@ class BoardController extends Controller
         $board->name = $request->name;
         $board->save();
 
-        return response()->noContent();
+        return response()->noContent(204);
     }
 
     public function archive(Request $request)
@@ -223,7 +223,7 @@ class BoardController extends Controller
             event(new RefreshNotifications($userId));
         };
 
-        return response()->noContent();
+        return response()->noContent(204);
     }
 
     public function unarchive(Request $request)

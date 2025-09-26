@@ -19,7 +19,7 @@ class TaskListController extends Controller
     {
         $request->validate([
             'boardId' => 'required',
-            'name' => 'required|string|max:255',
+            'name' => 'required|string|unique:lists,name|max:255',
         ]);
 
         $board = Board::findOrFail($request->boardId);

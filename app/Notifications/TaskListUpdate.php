@@ -28,7 +28,7 @@ class TaskListUpdate extends Notification implements ShouldQueue
 
     public function via(object $notifiable): array
     {
-        return ['mail', 'broadcast'];
+        return ['database', 'broadcast'];
     }
 
     public function broadcastOn()

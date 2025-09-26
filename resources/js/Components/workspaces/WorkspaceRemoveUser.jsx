@@ -24,11 +24,11 @@ export default function WorkspaceRemoveUser({
 
     const submit = useCallback(async () => {
         try {
-            await axios.post(
+            await axios.delete(
                 route("user.remove", {
                     userId: userId,
                     workspaceId: workspaceId,
-                }),
+                })
             );
             toggle();
             dispatch(removeUser({ userId, workspaceId, currentUserId }));

@@ -65,7 +65,7 @@ Route::middleware('auth')->group(function () {
     Route::patch('/workspace/unarchive/{id}', [WorkspaceController::class, 'unarchive'])->name('workspace.unarchive');
 
     Route::patch('/workspace/user/update', [WorkspaceUsersController::class, 'updateMember'])->name('userRole.update');
-    Route::post('/workspace/{workspaceId}/user/remove/{userId}', [WorkspaceUsersController::class, 'removeMember'])->name('user.remove');
+    Route::delete('/workspace/{workspaceId}/user/remove/{userId}', [WorkspaceUsersController::class, 'removeMember'])->name('user.remove');
 
     Route::get('/workspace/{workspaceId}/board/{id}', [BoardController::class, 'index'])->name('board.index');
     Route::post('/workspace/board/create', [BoardController::class, 'store'])->name('board.store');

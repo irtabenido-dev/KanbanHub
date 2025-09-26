@@ -4,6 +4,7 @@ namespace Tests\Feature\Auth;
 
 use App\Models\User;
 use App\Models\Workspace;
+use App\Models\WorkspaceUser;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Inertia\Testing\AssertableInertia as Assert;
 use Str;
@@ -60,7 +61,7 @@ class WorkspacesTest extends TestCase
         $user = User::factory()->create();
 
         $workspaceData = [
-            'name' => 'test'
+            'name' => 'test_workspace_create'
         ];
 
         $response = $this->actingAs($user)
@@ -76,13 +77,7 @@ class WorkspacesTest extends TestCase
     public function test_can_delete_workspace()
     {
         $user = User::factory()->create();
-        $workspace = Workspace::create([
-            'id' => Str::uuid(),
-            'name' => 'test',
-            'owner_id' => $user->id
-        ]);
-
-        $workspace->users()->attach($user->id, ['role' => 'owner']);
+        $workspace = Workspace::factory()->for($user, 'owner')->create();
 
         $response = $this->actingAs($user)
             ->delete(route('workspace.destroy', $workspace->id), [
@@ -102,11 +97,7 @@ class WorkspacesTest extends TestCase
         $owner = User::factory()->create();
         $otherUser = User::factory()->create();
 
-        $workspace = Workspace::create([
-            'id' => Str::uuid(),
-            'name' => 'test',
-            'owner_id' => $owner->id
-        ]);
+        $workspace = Workspace::factory()->for($owner, 'owner')->create();
 
         $response = $this->actingAs($otherUser)
             ->delete(route('workspace.destroy', $workspace->id), [
@@ -124,13 +115,7 @@ class WorkspacesTest extends TestCase
     public function test_can_edit_workspace()
     {
         $user = User::factory()->create();
-        $workspace = Workspace::create([
-            'id' => Str::uuid(),
-            'name' => 'test',
-            'owner_id' => $user->id
-        ]);
-
-        $workspace->users()->attach($user->id, ['role' => 'owner']);
+        $workspace = Workspace::factory()->for($user, 'owner')->create();
 
         $updateData = [
             'id' => $workspace->id,
@@ -156,18 +141,13 @@ class WorkspacesTest extends TestCase
         $user = User::factory()->create();
         $otherUser = User::factory()->create();
 
-        $workspace = Workspace::create([
-            'id' => Str::uuid(),
-            'name' => 'test',
-            'owner_id' => $user->id
-        ]);
+        $workspace = Workspace::factory()->for($user, 'owner')->create();
 
         $updateData = [
             'id' => $workspace->id,
             'name' => 'editedTestName'
         ];
 
-        $workspace->users()->attach($user->id, ['role' => 'owner']);
         $workspace->users()->attach($otherUser->id, ['role' => 'admin']);
 
         $response = $this->actingAs($otherUser)
@@ -179,13 +159,7 @@ class WorkspacesTest extends TestCase
     public function test_archive_and_unarchive_workspace()
     {
         $user = User::factory()->create();
-        $workspace = Workspace::create([
-            'id' => Str::uuid(),
-            'name' => 'test',
-            'owner_id' => $user->id
-        ]);
-
-        $workspace->users()->attach($user->id, ['role' => 'owner']);
+        $workspace = Workspace::factory()->for($user, 'owner')->create();
 
         $response = $this->actingAs($user)
             ->patch(route('workspace.archive', $workspace->id));
@@ -205,37 +179,69 @@ class WorkspacesTest extends TestCase
         $this->assertNull($workspace->archived_at);
     }
 
+    //add delete edit members
+    public function test_add_workspace_members()
+    {
+        $user = User::factory()->create();
+        $otherUser = User::factory()->create();
 
+        $workspace = Workspace::factory()->for($user, 'owner')->create();
 
-    // public function test_can_create_boards()
-    // {
-    //     $user = User::factory()->create();
-    //     $workspace = Workspace::create([
-    //         'id' => Str::uuid(),
-    //         'name' => 'test',
-    //         'owner_id' => $user->id
-    //     ]);
+        $workspace->users()->attach($otherUser->id, ['role' => 'member']);
 
-    //     $workspace->users()->attach($user->id, ['role' => 'owner']);
+        $this->assertDatabaseHas('workspace_user_role', [
+            'workspace_id' => $workspace->id,
+            'user_id' => $otherUser->id,
+            'role' => 'member'
+        ]);
+    }
 
-    //     $boardData = [
-    //         'name' => 'test',
-    //         'workspaceId' => $workspace->id,
-    //         'private' => false
-    //     ];
+    public function test_delete_workspace_members()
+    {
+        $user = User::factory()->create();
+        $otherUser = User::factory()->create();
 
-    //     $response = $this->actingAs($user)
-    //         ->post(route('board.store'), $boardData);
+        $workspace = Workspace::factory()->for($user, 'owner')->create();
 
-    //     $response->assertStatus(200);
+        $workspace->users()->attach($otherUser->id, ['role' => 'member']);
 
-    //     $responseData = $response->json();
+        $response = $this->actingAs($user)->delete(route('user.remove', [
+            'workspaceId' => $workspace->id,
+            'userId' => $otherUser->id
+        ]));
 
-    //     $this->assertDatabaseHas('boards', [
-    //         'id' => $responseData['board']['id'],
-    //         'name' => 'test',
-    //         'workspace_id' => $workspace->id,
-    //         'private' => false
-    //     ]);
-    // }
+        $response->assertStatus(204);
+
+        $this->assertDatabaseMissing('workspace_user_role', [
+            'workspace_id' => $workspace->id,
+            'user_id' => $otherUser->id,
+        ]);
+    }
+
+    public function test_edit_workspace_member_role()
+    {
+        $user = User::factory()->create();
+        $otherUser = User::factory()->create();
+
+        $workspace = Workspace::factory()->for($user, 'owner')->create();
+
+        $workspace->users()->attach($otherUser->id, ['role' => 'member']);
+
+        $response = $this->actingAs($user)->patch(route('userRole.update'), [
+            'targetId' => $otherUser->id,
+            'workspaceId' => $workspace->id,
+            'role' => 'admin',
+            'previousOwnerId' => $user->id,
+            'targetName' => $otherUser->name,
+            'currentUserId' => $user->id
+        ]);
+
+        $response->assertStatus(204);
+
+        $this->assertDatabaseHas('workspace_user_role', [
+            'workspace_id' => $workspace->id,
+            'user_id' => $otherUser->id,
+            'role' => 'admin'
+        ]);
+    }
 }

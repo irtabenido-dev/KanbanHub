@@ -607,7 +607,7 @@ class TaskController extends Controller
     public function updateDescription(Request $request)
     {
         $request->validate([
-            'taskId' => 'required|exists:tasks,id'
+            'taskId' => 'required|exists:tasks,id',
         ]);
 
         $task = Task::findOrFail($request->taskId);

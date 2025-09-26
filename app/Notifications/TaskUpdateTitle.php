@@ -2,9 +2,7 @@
 
 namespace App\Notifications;
 
-use App\Models\Task;
-use App\Models\TaskActivities;
-use App\Models\TaskList;
+use App\Models\TaskActivity;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -26,7 +24,7 @@ class TaskUpdateTitle extends Notification implements ShouldQueue
     public $previousTitle;
     public function __construct($activityId, $senderId, $taskId, $boardId, $updatedTitle, $listId, $previousTitle)
     {
-        $this->activity = TaskActivities::findOrFail($activityId);
+        $this->activity = TaskActivity::findOrFail($activityId);
         $this->senderId = $senderId;
         $this->taskId = $taskId;
         $this->boardId = $boardId;
