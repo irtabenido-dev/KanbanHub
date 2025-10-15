@@ -1,5 +1,7 @@
 <?php
 
+namespace Tests\Feature;
+
 use App\Models\Board;
 use App\Models\Task;
 use App\Models\TaskActivity;
@@ -7,7 +9,6 @@ use App\Models\TaskList;
 use App\Models\User;
 use App\Models\Workspace;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Carbon;
 use Tests\TestCase;
 
 class BoardTasksTest extends TestCase

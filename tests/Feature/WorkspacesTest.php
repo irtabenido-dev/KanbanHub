@@ -1,13 +1,11 @@
 <?php
 
-namespace Tests\Feature\Auth;
+namespace Tests\Feature;
 
 use App\Models\User;
 use App\Models\Workspace;
-use App\Models\WorkspaceUser;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Inertia\Testing\AssertableInertia as Assert;
-use Str;
 use Tests\TestCase;
 
 class WorkspacesTest extends TestCase

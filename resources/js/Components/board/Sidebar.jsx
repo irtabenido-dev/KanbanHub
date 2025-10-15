@@ -25,17 +25,18 @@ export function Sidebar() {
     const user = useSelector(getUser);
     const { workspaceRole, boardRole } = useSelector(state => getUserRoles(state, user.id));
     const { hasPermission } = usePermissions();
+
     const boardRow = useCallback(({ index, style }) => {
         const currentBoard = board.relatedBoards[index];
         if (!currentBoard) return null;
-
+        console.log(board);
         return (
             <div
                 className="flex items-center"
                 style={style}>
                 <Link
                     className="bg-transparent text-[#E6E6E6] hover:bg-[#2C2C2C] hover:text-white p-2 rounded"
-                    href={`/workspace/${board.workspace_id}/board/${currentBoard.id}`}>
+                    href={`/workspace/${board.workspaceId}/board/${currentBoard.id}`}>
                     <div className="flex items-center">
                         <span className="font-medium truncate">{currentBoard.name}</span>
                     </div>

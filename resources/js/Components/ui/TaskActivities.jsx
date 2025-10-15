@@ -434,7 +434,7 @@ export default function TaskActivities({ task, activities, setActivities, attach
                     }
                     <List
                         ref={listRef}
-                        height={attachmentNotEmpty ? 420 : 500}
+                        height={attachmentNotEmpty ? 380 : 450}
                         itemCount={filteredActivities.length}
                         itemSize={getItemSize}
                         width="100%"

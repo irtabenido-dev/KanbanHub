@@ -1,5 +1,7 @@
 <?php
 
+namespace Tests\Feature;
+
 use App\Models\Board;
 use App\Models\TaskList;
 use App\Models\User;

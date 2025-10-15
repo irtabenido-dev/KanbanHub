@@ -218,7 +218,7 @@ export default function BoardTaskModal({ show, toggle, listId, taskId }) {
                     mount: { scale: 1, y: 0 },
                     unmount: { scale: 1, y: 100 }
                 }}
-                className="h-[85%] overflow-y-scroll"
+                className="h-[85%] overflow-y-hidden"
             >
                 <DialogBody>
                     <div
@@ -330,62 +330,66 @@ export default function BoardTaskModal({ show, toggle, listId, taskId }) {
                             </svg>
                         </IconButton>
                     </div>
-                    <div className="flex flex-col-reverse md:flex-row gap-2 flex-1 mt-4 text-blue-gray-900 min-h-0">
-                        <div className="w-full md:w-4/5 flex flex-col min-h-0">
+                    <div className="flex flex-col-reverse md:flex-row gap-2 flex-1 mt-4 text-blue-gray-900 min-h-0 w-full">
+                        <div className="w-full  flex flex-col min-h-0">
                             <div className="flex flex-col flex-1 min-h-0 ">
-                                <TaskAddDueDate
-                                    task={task}
-                                    setActivities={setActivities}
-                                    sidebar={false}
-                                />
-                                <TaskDescription task={task} setActivities={setActivities} />
-                                <TaskAttachments task={task} files={files} setFiles={setFiles} setActivities={setActivities} />
+                                <div className="flex gap-2 w-full">
+                                    <div className="flex flex-col flex-grow">
+                                        <TaskAddDueDate
+                                            task={task}
+                                            setActivities={setActivities}
+                                            sidebar={false}
+                                        />
+                                        <TaskDescription task={task} setActivities={setActivities} />
+                                        <TaskAttachments task={task} files={files} setFiles={setFiles} setActivities={setActivities} />
+                                    </div>
+                                    <div className="w-full md:w-1/5 flex flex-col gap-2">
+                                        {((workspaceRole === 'member' && boardRole === 'member') && !task.users.some(taskUser => taskUser.id === user.id)) &&
+                                            <BoardTaskUserAdd
+                                                listId={listId}
+                                                taskId={taskId}
+                                                userId={user.id}
+                                                setActivities={setActivities}
+                                            />
+                                        }
+                                        {(task?.users?.some(taskUser => taskUser.id === user.id)) &&
+                                            <BoardTaskUserRemove
+                                                listId={listId}
+                                                taskId={taskId}
+                                                userId={user.id}
+                                                setActivities={setActivities}
+                                            />
+                                        }
+                                        {canInteract &&
+                                            <BoardTaskUsers
+                                                listId={listId}
+                                                taskId={taskId}
+                                                setActivities={setActivities}
+                                            />
+                                        }
+                                        {(canInteract || isTaskMember) &&
+                                            <TaskFilesUpload
+                                                listId={listId}
+                                                taskId={taskId}
+                                                setFiles={setFiles}
+                                                setActivities={setActivities}
+                                            />
+                                        }
+                                        {(canInteract || isTaskMember) &&
+                                            <TaskAddDueDate
+                                                task={task}
+                                                setActivities={setActivities}
+                                                sidebar={true}
+                                            />
+                                        }
+                                    </div>
+                                </div>
                                 {fetchingActivities ?
                                     <Spinner className="m-auto" />
                                     :
                                     <TaskActivities task={task} activities={activities} setActivities={setActivities} attachmentNotEmpty={files?.length > 0} />
                                 }
                             </div>
-                        </div>
-                        <div className="w-full md:w-1/5 flex flex-row md:flex-col gap-2">
-                            {((workspaceRole === 'member' && boardRole === 'member') && !task.users.some(taskUser => taskUser.id === user.id)) &&
-                                <BoardTaskUserAdd
-                                    listId={listId}
-                                    taskId={taskId}
-                                    userId={user.id}
-                                    setActivities={setActivities}
-                                />
-                            }
-                            {(task?.users?.some(taskUser => taskUser.id === user.id)) &&
-                                <BoardTaskUserRemove
-                                    listId={listId}
-                                    taskId={taskId}
-                                    userId={user.id}
-                                    setActivities={setActivities}
-                                />
-                            }
-                            {canInteract &&
-                                <BoardTaskUsers
-                                    listId={listId}
-                                    taskId={taskId}
-                                    setActivities={setActivities}
-                                />
-                            }
-                            {(canInteract || isTaskMember) &&
-                                <TaskFilesUpload
-                                    listId={listId}
-                                    taskId={taskId}
-                                    setFiles={setFiles}
-                                    setActivities={setActivities}
-                                />
-                            }
-                            {(canInteract || isTaskMember) &&
-                                <TaskAddDueDate
-                                    task={task}
-                                    setActivities={setActivities}
-                                    sidebar={true}
-                                />
-                            }
                         </div>
                     </div>
                 </DialogBody>
