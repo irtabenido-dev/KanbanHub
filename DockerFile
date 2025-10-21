@@ -22,16 +22,19 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 # Copy all app files first
 COPY . .
 
-# Install Composer dependencies
-RUN composer install --no-dev --optimize-autoloader --no-scripts && \
-    composer run-script post-autoload-dump
+# Install Composer dependencies (skip ALL scripts)
+RUN composer install --no-dev --optimize-autoloader --no-scripts
 
 # Copy built frontend assets
 COPY --from=build /app/public/build ./public/build
+
+# Copy and set entrypoint
+COPY entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/entrypoint.sh
 
 # Permissions
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
 EXPOSE 8000
 
-CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
+ENTRYPOINT ["entrypoint.sh"]
