@@ -1,5 +1,5 @@
 import NotificationDropdown from '@/Components/ui/NotificationDropdown';
-import Profile from '@/Components/ui/profile';
+import Profile from '@/Components/ui/Profile';
 import { setUser } from '@/Features/user/userSlice';
 import { usePage, Head, Link } from '@inertiajs/react';
 import { Typography } from '@material-tailwind/react';
