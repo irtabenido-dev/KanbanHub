@@ -1,0 +1,35 @@
+# Build frontend
+FROM node:18 AS build
+WORKDIR /app
+COPY package*.json yarn.lock* ./
+RUN yarn install
+COPY . .
+RUN yarn build
+
+# Laravel backend
+FROM php:8.2-fpm
+
+# Install dependencies
+RUN apt-get update && apt-get install -y \
+    git curl libpng-dev libonig-dev libxml2-dev zip unzip libzip-dev && \
+    docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip
+
+WORKDIR /var/www/html
+
+# Install Composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+# Copy app files and install dependencies
+COPY composer.* ./
+RUN composer install --no-dev --optimize-autoloader
+COPY . .
+
+# Copy built frontend assets
+COPY --from=build /app/public/build ./public/build
+
+# Permissions
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+
+EXPOSE 8000
+
+CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
