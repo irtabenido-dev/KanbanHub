@@ -19,11 +19,13 @@ WORKDIR /var/www/html
 # Install Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# Copy app files and install dependencies
-COPY composer.json composer.lock ./
-RUN composer install --no-dev --optimize-autoloader
-
+# Copy all app files first
 COPY . .
+
+# Install Composer dependencies
+RUN composer install --no-dev --optimize-autoloader --no-scripts && \
+    composer run-script post-autoload-dump
+
 # Copy built frontend assets
 COPY --from=build /app/public/build ./public/build
 
