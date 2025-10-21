@@ -12,7 +12,8 @@ FROM php:8.2-fpm
 # Install dependencies including nginx and gettext (for envsubst)
 RUN apt-get update && apt-get install -y \
     git curl libpng-dev libonig-dev libxml2-dev zip unzip libzip-dev nginx gettext-base && \
-    docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip
+    docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip && \
+    rm -rf /var/lib/apt/lists/*
 
 WORKDIR /var/www/html
 
@@ -31,24 +32,43 @@ COPY --from=build /app/public/build ./public/build
 # Permissions
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
-# Configure Nginx
-RUN echo 'server { \n\
-    listen ${PORT}; \n\
-    server_name _; \n\
-    root /var/www/html/public; \n\
-    index index.php; \n\
+# Remove default Nginx config and create new one
+RUN rm -f /etc/nginx/sites-enabled/default && \
+    rm -f /etc/nginx/sites-available/default
+
+# Create Nginx configuration template
+RUN echo 'server {\n\
+    listen ${PORT};\n\
+    listen [::]:${PORT};\n\
+    server_name _;\n\
+    root /var/www/html/public;\n\
+    index index.php index.html;\n\
     \n\
-    location / { \n\
-        try_files $uri $uri/ /index.php?$query_string; \n\
-    } \n\
+    add_header X-Frame-Options "SAMEORIGIN";\n\
+    add_header X-Content-Type-Options "nosniff";\n\
     \n\
-    location ~ \.php$ { \n\
-        fastcgi_pass 127.0.0.1:9000; \n\
-        fastcgi_index index.php; \n\
-        fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name; \n\
-        include fastcgi_params; \n\
-    } \n\
-}' > /etc/nginx/sites-available/default
+    charset utf-8;\n\
+    \n\
+    location / {\n\
+        try_files $uri $uri/ /index.php?$query_string;\n\
+    }\n\
+    \n\
+    location = /favicon.ico { access_log off; log_not_found off; }\n\
+    location = /robots.txt  { access_log off; log_not_found off; }\n\
+    \n\
+    error_page 404 /index.php;\n\
+    \n\
+    location ~ \.php$ {\n\
+        fastcgi_pass 127.0.0.1:9000;\n\
+        fastcgi_index index.php;\n\
+        fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;\n\
+        include fastcgi_params;\n\
+    }\n\
+    \n\
+    location ~ /\.(?!well-known).* {\n\
+        deny all;\n\
+    }\n\
+}' > /etc/nginx/sites-available/laravel
 
 # Copy and set entrypoint
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
