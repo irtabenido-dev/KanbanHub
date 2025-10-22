@@ -1,10 +1,9 @@
 #!/bin/bash
 set -e
 
-echo "==> Starting application on PORT: ${PORT:-8000}"
-
 # Set default PORT
 PORT=${PORT:-8000}
+echo "==> Starting application on PORT: ${PORT}"
 
 # Start PHP-FPM in background
 echo "==> Starting PHP-FPM..."
@@ -17,6 +16,7 @@ sleep 3
 echo "==> Configuring Nginx for port $PORT..."
 export PORT
 envsubst '${PORT}' < /etc/nginx/sites-available/laravel > /etc/nginx/sites-enabled/laravel
+cp /etc/nginx/sites-enabled/laravel /etc/nginx/sites-available/laravel
 
 # Test Nginx config
 echo "==> Testing Nginx configuration..."

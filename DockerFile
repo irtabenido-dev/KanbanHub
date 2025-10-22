@@ -89,6 +89,6 @@ RUN echo 'server {\n\
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
-EXPOSE 8000
+EXPOSE 8000 10000
 
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
