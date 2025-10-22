@@ -1,25 +1,19 @@
 #!/bin/bash
-set -ex  # x flag shows each command as it executes
+set -ex
 
 echo "PORT environment variable is: ${PORT:-NOT SET}"
-echo "All environment variables:"
-env | grep -E "PORT|RENDER" || echo "No PORT/RENDER vars found"
 
-# Set default PORT if not provided by Render
+# Set default PORT
 PORT=${PORT:-8000}
-
 echo "Using PORT: $PORT"
 
 # Start PHP-FPM in background
 php-fpm -D
-sleep 3
+sleep 2
 
-# Configure and test Nginx
+# Configure Nginx
 export PORT
 envsubst '${PORT}' < /etc/nginx/sites-available/laravel > /etc/nginx/sites-enabled/laravel
-
-echo "Generated Nginx config:"
-cat /etc/nginx/sites-enabled/laravel
 
 echo "Testing Nginx config..."
 nginx -t
@@ -28,17 +22,41 @@ echo "Starting Nginx..."
 nginx -g "daemon off;" &
 NGINX_PID=$!
 
-# Give nginx a moment to start
-sleep 3
+sleep 2
 
-# Check if nginx is listening
-echo "Checking if port $PORT is open..."
-netstat -tlnp | grep ":$PORT" || echo "Port $PORT not listening!"
-
-# Run Laravel commands AFTER nginx starts (to avoid blocking)
+# Run Laravel commands
+echo "Running Laravel setup..."
 php artisan package:discover --ansi || true
+
+# IMPORTANT: Generate app key if not set
+php artisan key:generate --force --ansi || true
+
 php artisan config:cache || true
 php artisan route:cache || true
+php artisan view:cache || true
 
-# Keep nginx running in foreground
+# Show Laravel errors for debugging
+echo "Checking Laravel logs..."
+tail -n 50 /var/www/html/storage/logs/laravel.log || echo "No logs yet"
+
+# Test if Laravel is working
+echo "Testing Laravel..."
+php artisan --version || echo "Artisan failed"
+
+# Keep nginx running
 wait $NGINX_PID
+```
+
+## Check Environment Variables in Render Dashboard
+
+Make sure these are set in your Render environment variables:
+```
+APP_KEY=base64:... (Laravel will generate this)
+APP_ENV=production
+APP_DEBUG=false (set to true temporarily to see errors)
+DB_CONNECTION=mysql
+DB_HOST=your-db-host
+DB_PORT=3306
+DB_DATABASE=your-db-name
+DB_USERNAME=your-db-user
+DB_PASSWORD=your-db-password

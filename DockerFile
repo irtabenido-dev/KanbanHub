@@ -29,8 +29,14 @@ RUN composer install --no-dev --optimize-autoloader --no-scripts
 # Copy built frontend assets
 COPY --from=build /app/public/build ./public/build
 
-# Permissions
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+# Create storage directories and set permissions
+RUN mkdir -p storage/logs \
+    storage/framework/cache \
+    storage/framework/sessions \
+    storage/framework/views \
+    bootstrap/cache && \
+    chown -R www-data:www-data storage bootstrap/cache && \
+    chmod -R 775 storage bootstrap/cache
 
 # Remove default Nginx config and create new one
 RUN rm -f /etc/nginx/sites-enabled/default && \
