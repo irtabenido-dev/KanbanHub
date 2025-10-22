@@ -18,7 +18,48 @@ envsubst '${PORT}' < /etc/nginx/sites-available/laravel > /etc/nginx/sites-enabl
 echo "Testing Nginx config..."
 nginx -t
 
+echo "Starting Nginx..."#!/bin/bash
+set -ex
+
+echo "PORT environment variable is: ${PORT:-NOT SET}"
+
+# Set default PORT
+PORT=${PORT:-8000}
+echo "Using PORT: $PORT"
+
+# Start PHP-FPM in background
+php-fpm -D
+sleep 2
+
+# Configure Nginx
+export PORT
+envsubst '${PORT}' < /etc/nginx/sites-available/laravel > /etc/nginx/sites-enabled/laravel
+
+echo "Testing Nginx config..."
+nginx -t
+
 echo "Starting Nginx..."
+nginx -g "daemon off;" &
+NGINX_PID=$!
+
+sleep 2
+
+# Run Laravel commands (skip key:generate since we use env vars)
+echo "Running Laravel setup..."
+php artisan package:discover --ansi || true
+php artisan config:cache || true
+php artisan route:cache || true
+php artisan view:cache || true
+
+# Run migrations (after DB is configured)
+php artisan migrate --force || echo "Migration failed - check DB credentials"
+
+# Test if Laravel is working
+echo "Testing Laravel..."
+php artisan --version || echo "Artisan failed"
+
+# Keep nginx running
+wait $NGINX_PID
 nginx -g "daemon off;" &
 NGINX_PID=$!
 
