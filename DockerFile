@@ -1,18 +1,11 @@
-# Build frontend
-FROM node:18 AS build
-WORKDIR /app
-COPY package*.json yarn.lock* ./
-RUN yarn install
-COPY . .
-RUN yarn build
-
-# Laravel backend
+# Laravel backend with frontend build
 FROM php:8.2-fpm
 
-# Install dependencies including nginx and gettext (for envsubst)
-RUN apt-get update && apt-get install -y \
+# Install Node.js and dependencies
+RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && \
+    apt-get update && apt-get install -y \
     git curl libpng-dev libonig-dev libxml2-dev zip unzip libzip-dev nginx gettext-base \
-    libpq-dev && \
+    libpq-dev nodejs && \
     docker-php-ext-install pdo_pgsql pgsql mbstring exif pcntl bcmath gd zip && \
     rm -rf /var/lib/apt/lists/*
 
@@ -27,8 +20,10 @@ COPY . .
 # Install Composer dependencies
 RUN composer install --no-dev --optimize-autoloader --no-scripts
 
-# Copy built frontend assets
-COPY --from=build /app/public/build ./public/build
+# Install Yarn and build frontend (will use runtime env vars)
+RUN npm install -g yarn && \
+    yarn install && \
+    yarn build
 
 # Create storage directories and set permissions
 RUN mkdir -p storage/logs \
@@ -43,7 +38,7 @@ RUN mkdir -p storage/logs \
 RUN rm -f /etc/nginx/sites-enabled/default && \
     rm -f /etc/nginx/sites-available/default
 
-# Create Nginx configuration template
+# Create Nginx configuration template with WebSocket support
 RUN echo 'server {\n\
     listen ${PORT};\n\
     listen [::]:${PORT};\n\
@@ -58,6 +53,19 @@ RUN echo 'server {\n\
     \n\
     location / {\n\
         try_files $uri $uri/ /index.php?$query_string;\n\
+    }\n\
+    \n\
+    # WebSocket proxy for Laravel Reverb\n\
+    location /app {\n\
+        proxy_pass http://127.0.0.1:8080;\n\
+        proxy_http_version 1.1;\n\
+        proxy_set_header Upgrade $http_upgrade;\n\
+        proxy_set_header Connection "Upgrade";\n\
+        proxy_set_header Host $host;\n\
+        proxy_set_header X-Real-IP $remote_addr;\n\
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;\n\
+        proxy_set_header X-Forwarded-Proto $scheme;\n\
+        proxy_read_timeout 86400;\n\
     }\n\
     \n\
     location = /favicon.ico { access_log off; log_not_found off; }\n\
