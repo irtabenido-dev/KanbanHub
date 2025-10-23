@@ -20,10 +20,9 @@ COPY . .
 # Install Composer dependencies
 RUN composer install --no-dev --optimize-autoloader --no-scripts
 
-# Install Yarn and build frontend (will use runtime env vars)
+# Install Yarn and frontend dependencies (but DON'T build yet)
 RUN npm install -g yarn && \
-    yarn install && \
-    yarn build
+    yarn install
 
 # Create storage directories and set permissions
 RUN mkdir -p storage/logs \
@@ -55,7 +54,7 @@ RUN echo 'server {\n\
         try_files $uri $uri/ /index.php?$query_string;\n\
     }\n\
     \n\
-    # WebSocket proxy for Laravel Reverb\n\
+    # WebSocket proxy for Pusher\n\
     location /app {\n\
         proxy_pass http://127.0.0.1:8080;\n\
         proxy_http_version 1.1;\n\
