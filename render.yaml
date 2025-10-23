@@ -50,6 +50,14 @@ services:
         fromDatabase:
           name: kanbanhub-db
           property: password
+      - key: VITE_PUSHER_APP_KEY
+        sync: false
+      - key: VITE_PUSHER_APP_SECRET
+        sync: false
+      - key: VITE_PUSHER_APP_ID
+        sync: false
+      - key: VITE_PUSHER_APP_CLUSTER
+        value: ap1
 
 databases:
   - name: kanbanhub-db
