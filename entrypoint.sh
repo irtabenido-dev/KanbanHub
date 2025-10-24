@@ -5,13 +5,20 @@ set -e
 PORT=${PORT:-8000}
 echo "==> Starting application on PORT: ${PORT}"
 
+# Debug: Print environment variables (remove after debugging)
+echo "==> Checking Pusher environment variables..."
+echo "PUSHER_APP_ID: ${PUSHER_APP_ID:-NOT SET}"
+echo "PUSHER_APP_KEY: ${PUSHER_APP_KEY:-NOT SET}"
+echo "PUSHER_APP_SECRET: ${PUSHER_APP_SECRET:-NOT SET}"
+echo "PUSHER_APP_CLUSTER: ${PUSHER_APP_CLUSTER:-NOT SET}"
+
 # Start PHP-FPM in background
 echo "==> Starting PHP-FPM..."
 php-fpm -D
 
 # Wait for PHP-FPM to start
 sleep 3
-
+g
 # Configure Nginx with PORT
 echo "==> Configuring Nginx for port $PORT..."
 export PORT
