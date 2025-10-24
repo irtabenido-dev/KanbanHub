@@ -18,7 +18,7 @@ php-fpm -D
 
 # Wait for PHP-FPM to start
 sleep 3
-g
+
 # Configure Nginx with PORT
 echo "==> Configuring Nginx for port $PORT..."
 export PORT
@@ -30,7 +30,7 @@ nginx -t
 
 # Start Nginx in background
 echo "==> Starting Nginx..."
-nginx -g "daemon off;" &
+nginx -g 'daemon off;' &
 NGINX_PID=$!
 
 # Wait a bit for Nginx to start
