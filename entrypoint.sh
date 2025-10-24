@@ -36,11 +36,6 @@ NGINX_PID=$!
 # Wait a bit for Nginx to start
 sleep 3
 
-# Run Laravel setup commands
-echo "==> Running Laravel setup..."
-php artisan config:clear
-php artisan config:cache
-
 # Run migrations
 echo "==> Running database migrations..."
 php artisan migrate --force || echo "Migrations failed - check database connection"
