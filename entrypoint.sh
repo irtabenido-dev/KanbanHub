@@ -5,10 +5,6 @@ set -e
 PORT=${PORT:-8000}
 echo "==> Starting application on PORT: ${PORT}"
 
-# Build frontend with runtime environment variables
-echo "==> Building frontend with environment variables..."
-yarn build
-
 # Start PHP-FPM in background
 echo "==> Starting PHP-FPM..."
 php-fpm -D
@@ -20,7 +16,6 @@ sleep 3
 echo "==> Configuring Nginx for port $PORT..."
 export PORT
 envsubst '${PORT}' < /etc/nginx/sites-available/laravel > /etc/nginx/sites-enabled/laravel
-cp /etc/nginx/sites-enabled/laravel /etc/nginx/sites-available/laravel
 
 # Test Nginx config
 echo "==> Testing Nginx configuration..."
@@ -44,7 +39,6 @@ echo "==> Running database migrations..."
 php artisan migrate --force || echo "Migrations failed - check database connection"
 
 # Cache optimization (after migrations)
-php artisan package:discover --ansi || true
 php artisan route:cache || true
 php artisan view:cache || true
 
