@@ -31,7 +31,7 @@ Route::get('/', function () {
 });
 
 Route::fallback(function () {
-    return file_get_contents(public_path('index.html'));
+    return file_get_contents(public_path('app'));
 });
 
 Route::middleware('auth')->group(function () {
