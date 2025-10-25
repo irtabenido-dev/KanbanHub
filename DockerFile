@@ -68,26 +68,37 @@ RUN echo 'server {\n\
     \n\
     charset utf-8;\n\
     \n\
+    # SPA fallback - send all requests to index.php\n\
     location / {\n\
-        try_files $uri $uri/ /index.php?$query_string;\n\
+    try_files $uri $uri/ /index.php?$query_string;\n\
     }\n\
     \n\
     location = /favicon.ico { access_log off; log_not_found off; }\n\
     location = /robots.txt  { access_log off; log_not_found off; }\n\
     \n\
+    # Serve static assets directly\n\
+    location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$ {\n\
+    expires max;\n\
+    log_not_found off;\n\
+    access_log off;\n\
+    try_files $uri =404;\n\
+    }\n\
+    \n\
     error_page 404 /index.php;\n\
     \n\
     location ~ \.php$ {\n\
-        fastcgi_pass 127.0.0.1:9000;\n\
-        fastcgi_index index.php;\n\
-        fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;\n\
-        include fastcgi_params;\n\
+    try_files $uri =404;\n\
+    fastcgi_pass 127.0.0.1:9000;\n\
+    fastcgi_index index.php;\n\
+    fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;\n\
+    fastcgi_param PATH_INFO $fastcgi_path_info;\n\
+    include fastcgi_params;\n\
     }\n\
     \n\
     location ~ /\.(?!well-known).* {\n\
-        deny all;\n\
+    deny all;\n\
     }\n\
-}' > /etc/nginx/sites-available/laravel
+    }' > /etc/nginx/sites-available/laravel
 
 # Copy and set entrypoint
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
