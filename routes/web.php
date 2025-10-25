@@ -30,14 +30,9 @@ Route::get('/', function () {
     ]);
 });
 
-// Route::get('/account/reactivateRequest', function (Request $request) {
-//     return Inertia::render('Auth/ReactivateAccount', [
-//         'email' => $request->query('email', 'test')
-//     ]);
-// })->name('account.reactivateRequest');
-
-// Route::post('/account/reactivate/{key}', [UserController::class, 'reactivate'])->name('account.reactivate');
-// Route::post('/account/sendReactivationRequest', [UserController::class, 'sendReactivationEmail'])->name('account.send.reactivationRequest');
+Route::fallback(function () {
+    return file_get_contents(public_path('index.html'));
+});
 
 Route::middleware('auth')->group(function () {
     Route::post('/account/deactivate', [ProfileController::class, 'deactivate'])->name('account.deactivate');
