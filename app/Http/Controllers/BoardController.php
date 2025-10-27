@@ -39,32 +39,6 @@ class BoardController extends Controller
         ]);
     }
 
-    public function getBoardUsers(Request $request)
-    {
-        $board = Board::findOrFail($request->id);
-        $workspaceUsers = Workspace::findOrFail($board->workspace_id)->users()->get();
-
-        $allMembers = $board->allUsers();
-
-        $users = $allMembers->map(function ($user) use ($workspaceUsers, $board) {
-            return [
-                'id' => $user->id,
-                'name' => $user->name,
-                'email' => $user->email,
-                'boardRole' => optional($board->users->firstWhere('id', $user->id))
-                    ->pivot->role ?? null,
-                'workspaceRole' => optional($workspaceUsers->firstWhere('id', $user->id))
-                    ->pivot->role ?? null,
-                'profilePicture' => $user->profile_data['profilePicture'],
-                'isVirtual' => !$board->users->contains('id', $user->id),
-            ];
-        });
-
-        return response()->json([
-            'users' => $users
-        ]);
-    }
-
     public function index(Request $request)
     {
         $currentUser = Auth::user();
@@ -136,10 +110,27 @@ class BoardController extends Controller
             ]),
         ]);
 
+        $workspaceUsers = Workspace::findOrFail($board->workspace_id)->users()->get();
+        $allMembers = $board->allUsers();
+
+        $users = $allMembers->map(function ($user) use ($workspaceUsers, $board) {
+            return [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'boardRole' => optional($board->users->firstWhere('id', $user->id))
+                    ->pivot->role ?? null,
+                'workspaceRole' => optional($workspaceUsers->firstWhere('id', $user->id))
+                    ->pivot->role ?? null,
+                'profilePicture' => $user->profile_data['profilePicture'],
+                'isVirtual' => !$board->users->contains('id', $user->id),
+            ];
+        });
+
         return Inertia::render('Board', [
             'board' => $mappedBoard,
             'lists' => $mappedTaskLists,
-            'users' => $this->getBoardUsers($request)
+            'users' => $users
         ]);
     }
 
