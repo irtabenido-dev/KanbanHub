@@ -63,6 +63,7 @@ RUN echo 'server {\n\
     root /var/www/html/public;\n\
     index index.php index.html;\n\
     \n\
+    client_max_body_size 100M;\n\
     add_header X-Frame-Options "SAMEORIGIN";\n\
     add_header X-Content-Type-Options "nosniff";\n\
     \n\
