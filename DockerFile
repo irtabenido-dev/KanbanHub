@@ -101,10 +101,16 @@ RUN echo 'server {\n\
     }\n\
     }' > /etc/nginx/sites-available/laravel
 
+RUN echo "upload_max_filesize = 100M" >> /usr/local/etc/php/conf.d/uploads.ini && \
+    echo "post_max_size = 100M" >> /usr/local/etc/php/conf.d/uploads.ini && \
+    echo "max_execution_time = 300" >> /usr/local/etc/php/conf.d/uploads.ini && \
+    echo "memory_limit = 256M" >> /usr/local/etc/php/conf.d/uploads.ini
+
 # Copy and set entrypoint
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
 EXPOSE 8000 10000
+
 
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
