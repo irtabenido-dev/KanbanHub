@@ -30,10 +30,6 @@ Route::get('/', function () {
     ]);
 });
 
-Route::fallback(function () {
-    return file_get_contents(public_path('app'));
-});
-
 Route::middleware('auth')->group(function () {
     Route::post('/account/deactivate', [ProfileController::class, 'deactivate'])->name('account.deactivate');
 
