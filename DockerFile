@@ -47,9 +47,13 @@ RUN mkdir -p storage/logs \
     storage/framework/cache \
     storage/framework/sessions \
     storage/framework/views \
+    storage/app/public \
     bootstrap/cache && \
     chown -R www-data:www-data storage bootstrap/cache && \
     chmod -R 775 storage bootstrap/cache
+
+# Create storage symlink
+RUN php artisan storage:link || true
 
 # Remove default Nginx config and create new one
 RUN rm -f /etc/nginx/sites-enabled/default && \
@@ -93,6 +97,9 @@ RUN echo 'server {\n\
     fastcgi_index index.php;\n\
     fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;\n\
     fastcgi_param PATH_INFO $fastcgi_path_info;\n\
+    fastcgi_read_timeout 300;\n\
+    fastcgi_buffers 16 16k;\n\
+    fastcgi_buffer_size 32k;\n\
     include fastcgi_params;\n\
     }\n\
     \n\
