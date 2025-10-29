@@ -88,13 +88,12 @@ RUN echo 'server {\n\
     \n\
     location ~ \.php$ {\n\
     try_files $uri =404;\n\
-    fastcgi_pass unix:/run/php/php8.2-fpm.sock;\n\
+    fastcgi_pass 127.0.0.1:9000;\n\
     fastcgi_index index.php;\n\
     fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;\n\
     fastcgi_param PATH_INFO $fastcgi_path_info;\n\
     include fastcgi_params;\n\
     }\n\
-    \n\
     \n\
     location ~ /\.(?!well-known).* {\n\
     deny all;\n\
