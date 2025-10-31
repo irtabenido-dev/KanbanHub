@@ -61,8 +61,6 @@ class InviteController extends Controller
                 'invitation_link' => url("/invitation/{$invite_code}")
             ];
 
-            dd($testInvitation);
-
             $invitedUser->notify(new InvitationSent($invitation));
         } else {
 
