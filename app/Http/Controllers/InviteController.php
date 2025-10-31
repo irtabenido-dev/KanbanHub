@@ -12,7 +12,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
-use Notification;
 
 class InviteController extends Controller
 {
@@ -41,7 +40,7 @@ class InviteController extends Controller
         }
 
         if (!$existingInvitation) {
-            Invitation::create([
+            $testInvitation = Invitation::create([
                 'id' => $invitation_id,
                 'workspace_id' => $request->workspace_id,
                 'invited_id' => $request->user_id,
@@ -61,6 +60,8 @@ class InviteController extends Controller
                 'expires_at' => Carbon::now()->addDays(7),
                 'invitation_link' => url("/invitation/{$invite_code}")
             ];
+
+            dd($testInvitation);
 
             $invitedUser->notify(new InvitationSent($invitation));
         } else {
