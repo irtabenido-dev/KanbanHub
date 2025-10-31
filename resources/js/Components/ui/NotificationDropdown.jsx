@@ -22,6 +22,7 @@ export default function NotificationDropdown({ user }) {
     const getNotifications = async () => {
         try {
             const response = await axios.get(route("user.notifications"));
+            console.log(response.data.notifications);
             dispatch(setNotifications(response.data.notifications));
         } catch (error) {
             console.log(error);
