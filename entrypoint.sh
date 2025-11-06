@@ -39,7 +39,8 @@ sleep 3
 # Run migrations
 echo "==> Running database migrations..."
 
-php artisan migrate:fresh --force || echo "Migrations failed - check database connection"
+# php artisan migrate:fresh --force || echo "Migrations failed - check database connection"
+php artisan migrate --force || echo "Migrations failed - check database connection"
 
 # Cache optimization (after migrations)
 php artisan route:cache || true
