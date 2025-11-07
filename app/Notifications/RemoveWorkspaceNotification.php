@@ -4,10 +4,9 @@ namespace App\Notifications;
 
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;
 
-class RemoveWorkspaceNotification extends Notification implements ShouldQueue
+class RemoveWorkspaceNotification extends Notification
 {
     use Queueable;
 

@@ -4,11 +4,9 @@ namespace App\Notifications;
 
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class BoardAddUser extends Notification implements ShouldQueue
+class BoardAddUser extends Notification
 {
     use Queueable;
 

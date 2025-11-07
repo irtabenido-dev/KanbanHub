@@ -3,11 +3,9 @@
 namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class TaskUserRemoved extends Notification implements ShouldQueue
+class TaskUserRemoved extends Notification
 {
     use Queueable;
     public $taskName;

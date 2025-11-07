@@ -7,10 +7,9 @@ use App\Models\TaskActivity;
 use App\Models\TaskList;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;
 
-class TaskMove extends Notification implements ShouldQueue
+class TaskMove extends Notification
 {
     use Queueable;
 

@@ -5,11 +5,10 @@ namespace App\Notifications;
 use App\Models\User;
 use App\Models\Workspace;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class InvitationSent extends Notification implements ShouldQueue
+class InvitationSent extends Notification
 {
     use Queueable;
 
@@ -42,23 +41,21 @@ class InvitationSent extends Notification implements ShouldQueue
     public function via(object $notifiable): array
     {
 
-        // return ['mail', 'database'];
-        return ['database'];
+        return ['mail', 'database'];
     }
 
     /**
      * Get the mail representation of the notification.
      */
-    // public function toMail(object $notifiable): MailMessage
-    // {
-
-    //     return (new MailMessage)
-    //     ->subject("You've been invited to a workspace!")
-    //     ->greeting("Hello {$this->invited_name}!")
-    //     ->line("You have been invited to join the {$this->workspace_name} workspace.")
-    //     ->action("Click this link to accept the invitation", $this->invitationData['invitation_link'])
-    //     ->salutation("Best regards from {$this->inviter_name} and the {$this->workspace_name} team!");
-    // }
+    public function toMail(object $notifiable): MailMessage
+    {
+        return (new MailMessage)
+            ->subject("You've been invited to a workspace!")
+            ->greeting("Hello {$this->invited_name}!")
+            ->line("You have been invited to join the {$this->workspace_name} workspace.")
+            ->action("Click this link to accept the invitation", $this->invitationData['invitation_link'])
+            ->salutation("Best regards from {$this->inviter_name} and the {$this->workspace_name} team!");
+    }
 
     /**
      * Get the array representation of the notification.
