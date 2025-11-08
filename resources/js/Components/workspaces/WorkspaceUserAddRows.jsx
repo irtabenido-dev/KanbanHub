@@ -10,6 +10,8 @@ export default function WorkspaceUserAddRows({ id, name, email, workspace_id }) 
     const [selectedRole, setSelectedRole] = useState('admin');
     const [invited, setInvited] = useState(false);
     const [blacklisted, setBlacklisted] = useState(false);
+    const [isInviteLoading, setIsInviteLoading] = useState(false);
+    const [isBlacklistLoading, setIsBlacklistLoading] = useState(false);
 
     let inviteData = {
         user_id: id,
@@ -27,8 +29,11 @@ export default function WorkspaceUserAddRows({ id, name, email, workspace_id }) 
         try {
             await axios.post(route('user.invite'), inviteData);
             setInvited(true);
+            setIsInviteLoading(true);
         } catch (error) {
             console.log(error);
+        } finally{
+            setIsInviteLoading(false);
         }
     }, [id, workspace_id, selectedRole]);
 
@@ -36,8 +41,11 @@ export default function WorkspaceUserAddRows({ id, name, email, workspace_id }) 
         try {
             await axios.post(route('user.blacklist'), blacklistData);
             setBlacklisted(true);
+            setIsBlacklistLoading(true);
         } catch (error) {
             console.log(error);
+        }finally {
+            setIsBlacklistLoading(false);
         }
     }, [id, workspace_id]);
 
@@ -91,6 +99,7 @@ export default function WorkspaceUserAddRows({ id, name, email, workspace_id }) 
                         color="blue"
                         size="sm"
                         onClick={submitInvite}
+                        loading={isInviteLoading}
                     >
                         Invite
                     </Button>
@@ -107,6 +116,7 @@ export default function WorkspaceUserAddRows({ id, name, email, workspace_id }) 
                         color="gray"
                         size="sm"
                         onClick={submitBlacklist}
+                        loading={isBlacklistLoading}
                     >
                         Blacklist
                     </Button>
