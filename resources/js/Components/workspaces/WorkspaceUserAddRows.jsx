@@ -13,38 +13,40 @@ export default function WorkspaceUserAddRows({ id, name, email, workspace_id }) 
     const [isInviteLoading, setIsInviteLoading] = useState(false);
     const [isBlacklistLoading, setIsBlacklistLoading] = useState(false);
 
-    let inviteData = {
-        user_id: id,
-        workspace_id: workspace_id,
-        role: selectedRole
-    };
-
-    let blacklistData = {
-        user_id: id,
-        blacklistable_id: workspace_id,
-        blacklistable_type: 'App\\Models\\Workspace'
-    }
-
     const submitInvite = useCallback(async () => {
+        setIsInviteLoading(true);
+
+        const inviteData = {
+            user_id: id,
+            workspace_id: workspace_id,
+            role: selectedRole
+        };
+
         try {
             await axios.post(route('user.invite'), inviteData);
             setInvited(true);
-            setIsInviteLoading(true);
         } catch (error) {
             console.log(error);
-        } finally{
+        } finally {
             setIsInviteLoading(false);
         }
     }, [id, workspace_id, selectedRole]);
 
     const submitBlacklist = useCallback(async () => {
+        setIsBlacklistLoading(true);
+
+        const blacklistData = {
+            user_id: id,
+            blacklistable_id: workspace_id,
+            blacklistable_type: 'App\\Models\\Workspace'
+        };
+
         try {
             await axios.post(route('user.blacklist'), blacklistData);
             setBlacklisted(true);
-            setIsBlacklistLoading(true);
         } catch (error) {
             console.log(error);
-        }finally {
+        } finally {
             setIsBlacklistLoading(false);
         }
     }, [id, workspace_id]);
@@ -79,6 +81,7 @@ export default function WorkspaceUserAddRows({ id, name, email, workspace_id }) 
                 <select
                     disabled={invited}
                     className="py-1 rounded-md text-left"
+                    value={selectedRole}
                     onChange={(e) => {
                         setSelectedRole(e.target.value);
                     }}
