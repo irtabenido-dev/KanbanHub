@@ -5,9 +5,10 @@ namespace App\Notifications;
 use App\Models\TaskActivity;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Notifications\Notification;
 
-class TaskUpdateTitle extends Notification
+class TaskUpdateTitle extends Notification implements ShouldBroadcastNow
 {
     use Queueable;
 

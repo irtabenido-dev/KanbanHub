@@ -4,9 +4,10 @@ namespace App\Notifications;
 
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Notifications\Notification;
 
-class RestoredWorkspaceNotification extends Notification
+class RestoredWorkspaceNotification extends Notification implements ShouldBroadcastNow
 {
     use Queueable;
 
@@ -32,7 +33,7 @@ class RestoredWorkspaceNotification extends Notification
 
      public function via(object $notifiable): array
      {
-         return ['database'];
+         return ['database', 'broadcast'];
      }
 
     public function broadcastOn()

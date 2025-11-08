@@ -36,9 +36,6 @@ class UpdatedWorkspace extends Notification
         return ['database'];
     }
 
-    /**
-     * Get the mail representation of the notification.
-     */
     public function broadcastOn()
     {
         return new PrivateChannel("workspace.{$this->workspaceId}");

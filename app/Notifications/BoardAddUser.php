@@ -4,9 +4,10 @@ namespace App\Notifications;
 
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Notifications\Notification;
 
-class BoardAddUser extends Notification
+class BoardAddUser extends Notification implements ShouldBroadcastNow
 {
     use Queueable;
 
