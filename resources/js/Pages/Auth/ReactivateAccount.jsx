@@ -1,15 +1,24 @@
 import GuestLayout from "@/Layouts/GuestLayout";
-import { useForm, usePage } from "@inertiajs/react";
+import { usePage } from "@inertiajs/react";
 import { Button, Typography } from "@material-tailwind/react";
+import axios from "axios";
+import { useState } from "react";
 
 export default function ReactivateAccount({ message }) {
     const { props } = usePage();
-    const { data, post } = useForm({
-        email: props.email
-    });
+    const [isLoading, setIsLoading] = useState(false);
 
-    const submit = () => {
-        post(route('account.reactivation-request'), data);
+    const submit = async () => {
+        setIsLoading(true);
+        try {
+            await axios.post(route('account.reactivation-request'), {
+                email: props.email
+            });
+        } catch (error) {
+            console.log(error);
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     return (
@@ -29,6 +38,7 @@ export default function ReactivateAccount({ message }) {
                             color="blue"
                             className="w-full mt-4 hover:bg-blue-600 transition duration-300 ease-in-out"
                             onClick={submit}
+                            loading={isLoading}
                         >
                             Send Reactivation Request
                         </Button>
