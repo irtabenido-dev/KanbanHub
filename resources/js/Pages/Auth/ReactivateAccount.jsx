@@ -24,8 +24,8 @@ export default function ReactivateAccount({ message }) {
     return (
         <>
             <GuestLayout>
-                <div className="flex justify-center items-center min-h-screen">
-                    <div className="border  p-6 rounded-xl shadow-xl w-[24rem]">
+                <div className="flex justify-center items-center h-[calc(100vh-5rem)]">
+                    <div className="border flex flex-col p-6 rounded-xl shadow-xl w-[24rem]">
                         <Typography variant="h5" color="white" className="text-center mb-4">
                             Your account is currently deactivated.
                         </Typography>
@@ -36,7 +36,7 @@ export default function ReactivateAccount({ message }) {
                         )}
                         <Button
                             color="blue"
-                            className="w-full mt-4 hover:bg-blue-600 transition duration-300 ease-in-out"
+                            className="mt-4 flex justify-center hover:bg-blue-600 transition duration-300 ease-in-out"
                             onClick={submit}
                             loading={isLoading}
                         >
