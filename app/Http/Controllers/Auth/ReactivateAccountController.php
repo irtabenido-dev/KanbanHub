@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\ReactivationKey;
 use App\Models\User;
 use App\Notifications\AccountReactivationNotification;
 use Illuminate\Http\Request;
@@ -29,7 +30,7 @@ class ReactivateAccountController extends Controller
 
         $key = Str::random(64);
 
-        \DB::table('reactivation_keys')->updateOrInsert(
+        ReactivationKey::updateOrInsert(
             ['user_id' => $user->id],
             [
                 'key' => hash('sha256', $key),
@@ -46,11 +47,10 @@ class ReactivateAccountController extends Controller
 
     public function verifyReactivationRequest(Request $request)
     {
-        $record = \DB::table('reactivation_keys')->where('key', $request->key)->first();
-
         $hashedKey = hash('sha256', $request->key);
+        $record = ReactivationKey::where('key', $hashedKey)->first();
 
-        if ($hashedKey !== $record->key) {
+        if (!$record) {
             abort(401, 'Reactivation key invalid');
         }
 
@@ -68,7 +68,7 @@ class ReactivateAccountController extends Controller
 
         $user->save();
 
-        \DB::table('reactivation_keys')->where('user_id', $user->id)->delete();
+        $record->delete();
 
         return redirect()->route('login')->with('status', 'Your account has been reactivated and you can now login');
     }
