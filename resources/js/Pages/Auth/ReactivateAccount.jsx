@@ -4,16 +4,20 @@ import { Button, Typography } from "@material-tailwind/react";
 import axios from "axios";
 import { useState } from "react";
 
-export default function ReactivateAccount({ message }) {
+export default function ReactivateAccount() {
     const { props } = usePage();
     const [isLoading, setIsLoading] = useState(false);
+    const [requestSuccess, setRequestSuccess] = useState(false);
 
     const submit = async () => {
         setIsLoading(true);
+        setRequestSuccess(false);
+
         try {
             await axios.post(route('account.reactivation-request'), {
                 email: props.email
             });
+            setRequestSuccess(true);
         } catch (error) {
             console.log(error);
         } finally {
@@ -29,9 +33,9 @@ export default function ReactivateAccount({ message }) {
                         <Typography variant="h5" color="white" className="text-center mb-4">
                             Your account is currently deactivated.
                         </Typography>
-                        {message && (
+                        {requestSuccess && (
                             <Typography variant="paragraph" color="green">
-                                {message}
+                                Reactivation request has been sent to your email address
                             </Typography>
                         )}
                         <Button
@@ -39,6 +43,7 @@ export default function ReactivateAccount({ message }) {
                             className="mt-4 flex justify-center hover:bg-blue-600 transition duration-300 ease-in-out"
                             onClick={submit}
                             loading={isLoading}
+                            disabled={requestSuccess}
                         >
                             Send Reactivation Request
                         </Button>
