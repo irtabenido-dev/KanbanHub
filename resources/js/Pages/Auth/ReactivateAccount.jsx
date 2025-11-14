@@ -34,7 +34,7 @@ export default function ReactivateAccount() {
                             Your account is currently deactivated.
                         </Typography>
                         {requestSuccess && (
-                            <Typography variant="paragraph" color="green">
+                            <Typography variant="paragraph" color="green" className="text-center">
                                 Reactivation request has been sent to your email address
                             </Typography>
                         )}
