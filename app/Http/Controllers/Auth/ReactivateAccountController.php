@@ -42,7 +42,7 @@ class ReactivateAccountController extends Controller
 
         $user->notify(new AccountReactivationNotification($url));
 
-        return back()->with('message', 'Request sent, please check your email address for further instructions on reactivating your account');
+        return response()->noContent();
     }
 
     public function verifyReactivationRequest(Request $request)
