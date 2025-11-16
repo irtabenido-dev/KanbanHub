@@ -33,8 +33,12 @@ return Application::configure(basePath: dirname(__DIR__))
                 'task/description/update'
             ])
         ]);
-
+    })
+    ->withMiddleware(function (Middleware $middleware): void {
+        $middleware->trustProxies(at: [
+            '192.168.1.1',
+            '10.0.0.0/8',
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        //
     })->create();
