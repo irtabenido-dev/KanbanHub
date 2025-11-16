@@ -40,7 +40,7 @@ class InviteController extends Controller
         }
 
         if (!$existingInvitation) {
-            $testInvitation = Invitation::create([
+            Invitation::create([
                 'id' => $invitation_id,
                 'workspace_id' => $request->workspace_id,
                 'invited_id' => $request->user_id,

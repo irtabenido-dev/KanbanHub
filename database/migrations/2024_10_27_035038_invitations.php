@@ -14,9 +14,6 @@ return new class extends Migration
         //
         Schema::create('invitations', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            // $table->uuid('workspace_id');
-            // $table->string('invited_id');
-            // $table->string('inviter_id');
             $table->string('role');
             $table->string('invitation_code');
             $table->timestamp('expires_at')->nullable();

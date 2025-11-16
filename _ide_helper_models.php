@@ -183,6 +183,29 @@ namespace App\Models{
 /**
  * 
  *
+ * @property int $id
+ * @property string $key
+ * @property string $expires_at
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property int $user_id
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ReactivationKey newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ReactivationKey newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ReactivationKey query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ReactivationKey whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ReactivationKey whereExpiresAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ReactivationKey whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ReactivationKey whereKey($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ReactivationKey whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ReactivationKey whereUserId($value)
+ */
+	class ReactivationKey extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * 
+ *
  * @property string $id
  * @property string $title
  * @property string|null $description
